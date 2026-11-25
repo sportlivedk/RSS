@@ -5,7 +5,7 @@
     <link>https://www.sport-live.dk/</link>
     <atom:link href="https://sportlivedk.github.io/RSS/rss.xml" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>
     <description>Latest submissions from SportLive</description>
-    <lastBuildDate>Wed, 25 Nov 2026 19:04:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 25 Nov 2026 19:07:00 +0000</lastBuildDate>
     <item>
       <title>Basketball: Dette er en test</title>
       <link>http://www.detteerentest.com/test.mp4</link>
@@ -13,14 +13,6 @@
       <enclosure url="https://cdn.abcotvs.com/dip/images/19919050_100726-wpvi-CHESTERSOCCER-thumb.jpg" type="image/jpeg" length="0" />
       <guid>http://www.detteerentest.com/test.mp4</guid>
       <category>sport, basketball</category>
-    </item>
-    <item>
-      <title>Basketball: Hold 1 - Hold 2</title>
-      <link>http://www.detteerentest.com/test.mp4</link>
-      <pubDate>Wed, 25 Nov 2026 18:05:00 +0000</pubDate>
-      <enclosure url="http://www.detteerentest.com/test.png" type="image/jpeg" length="0" />
-      <guid>http://www.detteerentest.com/test.mp4</guid>
-      <category>sport, basketball, basketligaen</category>
     </item>
     <item>
       <title>Basketligaen: Værløse Blue Hawks - BC Copenhagen</title>
