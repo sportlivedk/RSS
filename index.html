@@ -11,12 +11,12 @@
       --text: #1a1d21;
       --muted: #5f6672;
       --border: #d8dde6;
-      --green: #3d7a5a;
-      --green-hover: #316349;
-      --blue: #3f6a96;
-      --blue-hover: #325578;
-      --danger: #b04c4a;
-      --danger-hover: #933d3b;
+      --green: #2d8653;
+      --green-hover: #236b42;
+      --blue: #2b6cb0;
+      --blue-hover: #215387;
+      --danger: #c24542;
+      --danger-hover: #a13633;
     }
 
     * { box-sizing: border-box; }
@@ -175,7 +175,7 @@
     input:focus {
       outline: none;
       border-color: var(--blue);
-      box-shadow: 0 0 0 2px rgba(63, 106, 150, 0.18);
+      box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.18);
     }
 
     /* Knapper & Ikoner */
@@ -246,19 +246,28 @@
       font-size: 0.84rem;
     }
 
-    /* Statusbeskeder */
+    /* Svævende statusbesked øverst i skærmbilledet */
     #statusBanner {
       display: none;
-      padding: 12px 16px;
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 950;
+      min-width: 280px;
+      max-width: min(640px, calc(100% - 32px));
+      padding: 11px 20px;
       border-radius: 6px;
-      margin-bottom: 18px;
       font-size: 0.92rem;
-      font-weight: 500;
+      font-weight: 600;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      cursor: pointer;
     }
 
-    #statusBanner.info { display: block; background: #e8f0fe; color: #174ea6; border: 1px solid #c2d7fa; }
-    #statusBanner.success { display: block; background: #e6f4ea; color: #137333; border: 1px solid #b7dfbf; }
-    #statusBanner.error { display: block; background: #fce8e6; color: #a50e0e; border: 1px solid #f5c2c0; }
+    #statusBanner.info { display: block; background: #e8f0fe; color: #174ea6; border: 1px solid #b5cff8; }
+    #statusBanner.success { display: block; background: #e6f4ea; color: #137333; border: 1px solid #a8dab5; }
+    #statusBanner.error { display: block; background: #fce8e6; color: #a50e0e; border: 1px solid #f1b6b3; }
 
     /* Indholds-oversigt */
     .list-header {
@@ -267,7 +276,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .list-header h2 { margin: 0; }
@@ -280,9 +289,13 @@
     .clip-item {
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 15px 18px;
-      margin-bottom: 12px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
       background: #fafbfc;
+    }
+
+    .clip-item:last-child {
+      margin-bottom: 0;
     }
 
     .clip-top {
@@ -354,12 +367,12 @@
       display: flex;
       justify-content: flex-end;
       gap: 8px;
-      margin-top: 14px;
+      margin-top: 16px;
     }
 
     .show-more-wrap {
       text-align: center;
-      margin-top: 16px;
+      margin-top: 20px;
     }
 
     /* Popup Modal */
@@ -410,6 +423,8 @@
   </style>
 </head>
 <body>
+
+<div id="statusBanner" title="Klik for at skjule"></div>
 
 <div class="container">
 
@@ -466,8 +481,6 @@
       </div>
     </header>
 
-    <div id="statusBanner"></div>
-
     <!-- Tilføj ny video -->
     <div class="card">
       <h2>Tilføj ny video</h2>
@@ -507,10 +520,10 @@
     <div class="card">
       <div class="list-header">
         <h2 id="listHeading">Indhold i RSS-filen (0)</h2>
-        <input type="text" id="searchInput" class="search-box" placeholder="Søg i titel, link eller tags...">
+        <input type="text" id="searchInput" class="search-box" placeholder="Søg i titel, link eller tags ...">
       </div>
 
-      <div id="clipsContainer">Indlæser indhold...</div>
+      <div id="clipsContainer">Indlæser indhold ...</div>
 
       <div class="show-more-wrap" id="showMoreWrap" style="display:none;">
         <button type="button" class="btn" id="btnShowAll">Vis alle</button>
@@ -551,6 +564,7 @@
   let items = [];
   let currentSha = null;
   let showAllItems = false;
+  let statusTimer = null;
 
   function getPublicFeedUrl() {
     return `https://${GITHUB_CONFIG.owner}.github.io/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.path}`;
@@ -558,13 +572,17 @@
 
   function showStatus(msg, type = 'info') {
     const el = document.getElementById('statusBanner');
+    if (statusTimer) {
+      clearTimeout(statusTimer);
+      statusTimer = null;
+    }
     el.textContent = msg;
     el.className = type;
     el.style.display = 'block';
     if (type === 'success') {
-      setTimeout(() => {
-        if (el.textContent === msg) el.style.display = 'none';
-      }, 5000);
+      statusTimer = setTimeout(() => {
+        el.style.display = 'none';
+      }, 4000);
     }
   }
 
@@ -635,10 +653,10 @@
 
     showLoginError('');
     btn.disabled = true;
-    btn.textContent = 'Kontrollerer nøgle...';
+    btn.textContent = 'Kontrollerer nøgle ...';
     if (isAutoLogin) {
       form.style.display = 'none';
-      subtitle.textContent = 'Logger automatisk ind...';
+      subtitle.textContent = 'Logger automatisk ind ...';
     }
 
     const check = await verifyGitHubToken(token);
@@ -1073,7 +1091,7 @@
     const cancelBtn = document.getElementById('cancelbtn_' + id);
     if (saveBtn) {
       saveBtn.disabled = true;
-      saveBtn.textContent = 'Gemmer...';
+      saveBtn.textContent = 'Gemmer ...';
     }
     if (cancelBtn) cancelBtn.disabled = true;
 
@@ -1106,7 +1124,7 @@
     const delBtn = document.getElementById('delbtn_' + id);
     if (delBtn) {
       delBtn.disabled = true;
-      delBtn.textContent = 'Sletter...';
+      delBtn.textContent = 'Sletter ...';
     }
 
     const prevItems = [...items];
@@ -1125,6 +1143,10 @@
   document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('linkOpenFeed').href = getPublicFeedUrl();
     document.getElementById('modalFileLabel').textContent = GITHUB_CONFIG.path;
+
+    document.getElementById('statusBanner').addEventListener('click', (e) => {
+      e.currentTarget.style.display = 'none';
+    });
 
     const savedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
     if (savedToken) {
@@ -1149,7 +1171,7 @@
 
       const btn = document.getElementById('btnSubmitNew');
       btn.disabled = true;
-      btn.textContent = 'Gemmer...';
+      btn.textContent = 'Gemmer ...';
 
       const newItem = {
         id: 'item_' + Date.now(),
