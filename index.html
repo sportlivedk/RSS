@@ -64,7 +64,7 @@
     }
 
     .login-card h1 {
-      margin: 0 0 8px;
+      margin: 0 0 10px;
       font-size: 1.3rem;
       line-height: 1.3;
     }
@@ -82,6 +82,10 @@
 
     .login-card.auto-loading img {
       margin-top: 0;
+    }
+
+    .login-card.auto-loading h1 {
+      margin-bottom: 8px;
     }
 
     .login-card.auto-loading p {
@@ -513,19 +517,23 @@
 
 <div class="container">
 
-  <!-- LOGIN-VINDUE -->
+  <!-- LOGIN-VINDUE (ret udløbsdatoen herunder, når GitHub-nøglen fornyes) -->
   <div class="login-wrapper" id="loginScreen">
     <div class="login-card" id="loginCard">
       <img src="logo.png" alt="SPORT LIVE" onerror="this.style.display='none'">
       <h1>Højdepunkter til Ekstra Bladet</h1>
-      <p id="loginSubtitle">Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.</p>
+      <p id="loginSubtitle">
+        Indtast GitHub-nøgle for at logge ind.<br><br>
+        Browseren husker nøglen indtil 24-11-2027.
+      </p>
+      <p id="loginLoadingText" style="display:none;">Logger automatisk ind ...</p>
 
       <div class="login-error" id="loginError"></div>
 
       <form id="loginForm">
         <div class="form-group">
-          <label for="loginTokenInput">GitHub-adgangsnøgle</label>
-          <input type="password" id="loginTokenInput" required placeholder="github_pat_..." autocomplete="current-password">
+          <label for="loginTokenInput">Adgangsnøgle</label>
+          <input type="password" id="loginTokenInput" required autocomplete="off">
         </div>
         <button type="submit" class="btn btn-green btn-block" id="btnLoginSubmit">Log ind</button>
       </form>
@@ -736,6 +744,7 @@
     const btn = document.getElementById('btnLoginSubmit');
     const form = document.getElementById('loginForm');
     const subtitle = document.getElementById('loginSubtitle');
+    const loadingText = document.getElementById('loginLoadingText');
 
     showLoginError('');
     btn.disabled = true;
@@ -743,7 +752,8 @@
     if (isAutoLogin) {
       loginCard.classList.add('auto-loading');
       form.style.display = 'none';
-      subtitle.textContent = 'Logger automatisk ind ...';
+      subtitle.style.display = 'none';
+      loadingText.style.display = 'block';
     }
 
     const check = await verifyGitHubToken(token);
@@ -753,7 +763,8 @@
       btn.disabled = false;
       btn.textContent = 'Log ind';
       form.style.display = 'block';
-      subtitle.textContent = 'Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.';
+      subtitle.style.display = 'block';
+      loadingText.style.display = 'none';
       localStorage.removeItem(TOKEN_STORAGE_KEY);
       activeToken = '';
       document.getElementById('appContent').style.display = 'none';
@@ -769,7 +780,8 @@
     btn.disabled = false;
     btn.textContent = 'Log ind';
     form.style.display = 'block';
-    subtitle.textContent = 'Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.';
+    subtitle.style.display = 'block';
+    loadingText.style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
     document.getElementById('newPubDate').value = getNowLocalInput();
     await loadFeedFromGitHub();
@@ -779,6 +791,9 @@
     localStorage.removeItem(TOKEN_STORAGE_KEY);
     activeToken = '';
     document.getElementById('loginCard').classList.remove('auto-loading');
+    document.getElementById('loginSubtitle').style.display = 'block';
+    document.getElementById('loginLoadingText').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
     document.getElementById('loginTokenInput').value = '';
     document.getElementById('appContent').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'flex';
