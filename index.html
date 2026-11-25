@@ -720,7 +720,7 @@
       });
 
       if (userRes.status === 401) {
-        return { ok: false, reason: 'Adgangsnøglen er ugyldig eller udløbet.<br>Indsæt en gyldig GitHub-nøgle for at logge ind.' };
+        return { ok: false, reason: 'Adgangsnøglen er enten ugyldig eller udløbet. Indsæt en gyldig GitHub-nøgle for at logge ind.' };
       }
       if (!userRes.ok) {
         return { ok: false, reason: `Forbindelsen blev afvist (HTTP ${userRes.status}).` };
