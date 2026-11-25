@@ -14,7 +14,9 @@
       --green: #1e8e3e;
       --green-hover: #187332;
       --blue: #0b57d0;
+      --blue-hover: #0842a0;
       --danger: #c5221f;
+      --danger-hover: #a50e0e;
     }
 
     * { box-sizing: border-box; }
@@ -110,7 +112,7 @@
 
     header h1 {
       margin: 0;
-      font-size: 1.55rem;
+      font-size: 1.72rem;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
@@ -196,7 +198,7 @@
     }
 
     .btn:hover { background: #f1f3f5; }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
     .btn-icon {
       width: 17px;
@@ -217,12 +219,27 @@
       border-color: var(--green-hover);
     }
 
-    .btn-danger {
-      color: var(--danger);
-      border-color: #f1c1c0;
+    .btn-blue {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
     }
 
-    .btn-danger:hover { background: #fce8e6; }
+    .btn-blue:hover {
+      background: var(--blue-hover);
+      border-color: var(--blue-hover);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-hover);
+      border-color: var(--danger-hover);
+    }
 
     .btn-sm {
       padding: 6px 12px;
@@ -716,9 +733,12 @@
   }
 
   function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str ?? '';
-    return div.innerHTML;
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   function sortItemsDesc() {
@@ -928,8 +948,8 @@
           <div class="clip-top">
             <h3 class="clip-title">${escapeHtml(it.title)}</h3>
             <div class="clip-actions">
-              <button type="button" class="btn btn-sm" onclick="toggleEdit('${it.id}')">Rediger</button>
-              <button type="button" class="btn btn-sm btn-danger" onclick="deleteClip('${it.id}')">Slet</button>
+              <button type="button" class="btn btn-blue btn-sm" onclick="toggleEdit('${it.id}')">Rediger</button>
+              <button type="button" class="btn btn-danger btn-sm" id="delbtn_${it.id}" onclick="deleteClip('${it.id}')">Slet</button>
             </div>
           </div>
 
@@ -967,7 +987,7 @@
             </div>
             <div class="edit-buttons">
               <button type="button" class="btn btn-sm" onclick="toggleEdit('${it.id}')">Annuller</button>
-              <button type="button" class="btn btn-green btn-sm" onclick="saveEditedClip('${it.id}')">Gem</button>
+              <button type="button" class="btn btn-green btn-sm" id="savebtn_${it.id}" onclick="saveEditedClip('${it.id}')">Gem</button>
             </div>
           </div>
         </div>
@@ -997,6 +1017,12 @@
     }
     if (!validateUrlsBeforeSave(link, thumb)) return;
 
+    const saveBtn = document.getElementById('savebtn_' + id);
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Gemmer...';
+    }
+
     const backup = { ...items[idx] };
     items[idx] = {
       ...items[idx],
@@ -1008,7 +1034,13 @@
     };
 
     const ok = await saveFeedToGitHub(`Opdateret: ${title}`);
-    if (!ok) items[idx] = backup;
+    if (!ok) {
+      items[idx] = backup;
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Gem';
+      }
+    }
   };
 
   window.deleteClip = async function(id) {
@@ -1016,10 +1048,22 @@
     if (!target) return;
     if (!confirm(`Er du sikker på, at du vil slette:\n"${target.title}"?`)) return;
 
+    const delBtn = document.getElementById('delbtn_' + id);
+    if (delBtn) {
+      delBtn.disabled = true;
+      delBtn.textContent = 'Sletter...';
+    }
+
     const prevItems = [...items];
     items = items.filter(x => x.id !== id);
     const ok = await saveFeedToGitHub(`Slettet: ${target.title}`);
-    if (!ok) items = prevItems;
+    if (!ok) {
+      items = prevItems;
+      if (delBtn) {
+        delBtn.disabled = false;
+        delBtn.textContent = 'Slet';
+      }
+    }
   };
 
   // --- Opstart og Event Listeners ---
@@ -1050,6 +1094,7 @@
 
       const btn = document.getElementById('btnSubmitNew');
       btn.disabled = true;
+      btn.textContent = 'Gemmer...';
 
       const newItem = {
         id: 'item_' + Date.now(),
@@ -1063,6 +1108,7 @@
       items.unshift(newItem);
       const ok = await saveFeedToGitHub(`Tilføjet: ${title}`);
       btn.disabled = false;
+      btn.textContent = 'Gem';
 
       if (ok) {
         document.getElementById('addClipForm').reset();
