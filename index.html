@@ -537,7 +537,7 @@
       <h1>Højdepunkter til Ekstra Bladet</h1>
       <div id="loginSubtitle" class="login-subtitle">
         <p>Indtast GitHub-nøgle for at logge ind.</p>
-        <p>Din browser husker nøglen indtil 24-11-2027.</p>
+        <p>Browseren husker nøglen indtil 24-11-2027.</p>
       </div>
       <p id="loginLoadingText" style="display:none;">Logger automatisk ind ...</p>
 
@@ -720,7 +720,7 @@
       });
 
       if (userRes.status === 401) {
-        return { ok: false, reason: 'Adgangsnøglen er ugyldig eller udløbet. Indsæt en gyldig GitHub-nøgle for at logge ind.' };
+        return { ok: false, reason: 'Adgangsnøglen er ugyldig eller udløbet.<br>Indsæt en gyldig GitHub-nøgle for at logge ind.' };
       }
       if (!userRes.ok) {
         return { ok: false, reason: `Forbindelsen blev afvist (HTTP ${userRes.status}).` };
