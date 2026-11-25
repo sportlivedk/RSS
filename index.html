@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPORT LIVE – Højdepunkter til Ekstra Bladet</title>
+  <title>SPORT LIVE RSS</title>
   <style>
     :root {
       --bg: #f4f5f7;
@@ -21,7 +21,7 @@
 
     body {
       margin: 0;
-      padding: 18px 16px 64px;
+      padding: 24px 16px 64px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -93,12 +93,6 @@
       display: none;
     }
 
-    .top-utility {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 8px;
-    }
-
     /* Header & Logo */
     header {
       text-align: center;
@@ -149,24 +143,17 @@
       margin-bottom: 14px;
     }
 
-    label {
+    .form-actions {
       display: flex;
-      justify-content: space-between;
-      align-items: baseline;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    label {
+      display: block;
       font-weight: 600;
       font-size: 0.9rem;
       margin-bottom: 5px;
-    }
-
-    .label-action {
-      font-weight: 400;
-      font-size: 0.82rem;
-      color: var(--blue);
-      cursor: pointer;
-      text-decoration: underline;
-      background: none;
-      border: none;
-      padding: 0;
     }
 
     input[type="text"],
@@ -256,7 +243,7 @@
     #statusBanner.success { display: block; background: #e6f4ea; color: #137333; border: 1px solid #b7dfbf; }
     #statusBanner.error { display: block; background: #fce8e6; color: #a50e0e; border: 1px solid #f5c2c0; }
 
-    /* Klip-oversigt */
+    /* Indholds-oversigt */
     .list-header {
       display: flex;
       flex-wrap: wrap;
@@ -337,6 +324,7 @@
 
     .edit-buttons {
       display: flex;
+      justify-content: flex-end;
       gap: 8px;
       margin-top: 12px;
     }
@@ -418,10 +406,6 @@
 
   <!-- SELVE WEBSIDEN -->
   <div id="appContent">
-    <div class="top-utility">
-      <button type="button" class="btn btn-sm" id="btnLogout" title="Fjern gemt nøgle fra denne browser">Log ud / skift nøgle</button>
-    </div>
-
     <header>
       <img src="logo.png" alt="SPORT LIVE" onerror="this.style.display='none'">
       <h1>Højdepunkter til Ekstra Bladet</h1>
@@ -456,53 +440,52 @@
 
     <div id="statusBanner"></div>
 
-    <!-- Opret nyt klip -->
+    <!-- Tilføj ny video -->
     <div class="card">
-      <h2>Tilføj nyt højdepunktsklip</h2>
+      <h2>Tilføj ny video</h2>
       <form id="addClipForm">
         <div class="form-group">
-          <label for="newTitle">1) Titel</label>
-          <input type="text" id="newTitle" required placeholder="Fx Highlights: Conference League: Havnar Bóltfelag – Brøndby IF">
+          <label for="newTitle">Titel</label>
+          <input type="text" id="newTitle" required placeholder="F.eks. Basketball: Bakken Bears - Svendborg Rabbits">
         </div>
 
         <div class="form-group">
-          <label for="newVideoUrl">2) URL til video</label>
-          <input type="url" id="newVideoUrl" required placeholder="Fx http://89.188.72.190/sportlive/Highlights_F3DKC917246001.mp4">
+          <label for="newVideoUrl">URL til video</label>
+          <input type="url" id="newVideoUrl" required placeholder="F.eks. http://89.188.72.190/sportlive/Highlights_F3DKC917246001.mp4">
         </div>
 
         <div class="form-group">
-          <label for="newPubDate">
-            <span>3) Udgivelsesdato</span>
-            <button type="button" class="label-action" id="btnResetNow">Sæt til aktuel dato og tid</button>
-          </label>
+          <label for="newPubDate">Udgivelsesdato</label>
           <input type="datetime-local" id="newPubDate" required>
         </div>
 
         <div class="form-group">
-          <label for="newThumbUrl">4) URL til billede</label>
-          <input type="url" id="newThumbUrl" required placeholder="Fx http://89.188.72.190/sportlive/Thumb_F3DKC917246001.png">
+          <label for="newThumbUrl">URL til billede</label>
+          <input type="url" id="newThumbUrl" required placeholder="F.eks. http://89.188.72.190/sportlive/Thumb_F3DKC917246001.png">
         </div>
 
         <div class="form-group">
-          <label for="newTags">5) Tags (adskilles med komma)</label>
-          <input type="text" id="newTags" placeholder="Fx Conference League, Brøndby, Fodbold, sport">
+          <label for="newTags">Tags (adskilles med komma)</label>
+          <input type="text" id="newTags" placeholder="F.eks. basketball, basketligaen, sport">
         </div>
 
-        <button type="submit" class="btn btn-green" id="btnSubmitNew">Gem</button>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-green" id="btnSubmitNew">Gem</button>
+        </div>
       </form>
     </div>
 
-    <!-- Oversigt over eksisterende klip -->
+    <!-- Oversigt over indhold i RSS-filen -->
     <div class="card">
       <div class="list-header">
-        <h2 id="listHeading">Klip i RSS-filen (0)</h2>
+        <h2 id="listHeading">Indhold i RSS-filen (0)</h2>
         <input type="text" id="searchInput" class="search-box" placeholder="Søg i titel, link eller tags...">
       </div>
 
-      <div id="clipsContainer">Indlæser klip...</div>
+      <div id="clipsContainer">Indlæser indhold...</div>
 
       <div class="show-more-wrap" id="showMoreWrap" style="display:none;">
-        <button type="button" class="btn" id="btnShowAll">Vis alle klip</button>
+        <button type="button" class="btn" id="btnShowAll">Vis alle</button>
       </div>
     </div>
   </div>
@@ -801,7 +784,7 @@
     if (!/\.(png|jpg|jpeg)$/i.test(thumbUrl)) warnings.push('Billede-URL slutter ikke på .png eller .jpg.');
 
     if (warnings.length > 0) {
-      return confirm('Bemærk:\n- ' + warnings.join('\n- ') + '\n\nVil du gemme klippet alligevel?');
+      return confirm('Bemærk:\n- ' + warnings.join('\n- ') + '\n\nVil du gemme videoen alligevel?');
     }
     return true;
   }
@@ -818,14 +801,14 @@
     try {
       const res = await fetch(apiUrl, { cache: 'no-store', headers });
       if (res.status === 401) {
-        lockApp('Din GitHub-nøgle er udløbet. Indtast en ny nøgle.');
+        lockApp('Din GitHub-nøgle er udløbet eller ugyldig. Indtast en ny nøgle.');
         return;
       }
       if (res.status === 404) {
         items = [];
         currentSha = null;
         renderList();
-        showStatus(`Ingen ${path} fundet endnu. Filen oprettes automatisk, når du gemmer dit første klip.`, 'info');
+        showStatus(`Ingen ${path} fundet endnu. Filen oprettes automatisk, når du gemmer din første video.`, 'info');
         return;
       }
       if (!res.ok) {
@@ -888,7 +871,8 @@
         return false;
       }
       if (putRes.status === 403) {
-        throw new Error('Nøglen mangler skriverettighed ("Contents: Read and write") til RSS-repositoriet.');
+        lockApp('Den indtastede nøgle mangler skriverettighed ("Contents: Read and write") til RSS-repositoriet. Indtast en nøgle med skriveadgang.');
+        return false;
       }
       if (!putRes.ok) {
         const errData = await putRes.json().catch(() => ({}));
@@ -910,7 +894,7 @@
   function renderList() {
     const container = document.getElementById('clipsContainer');
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    document.getElementById('listHeading').textContent = `Klip i RSS-filen (${items.length})`;
+    document.getElementById('listHeading').textContent = `Indhold i RSS-filen (${items.length})`;
 
     const filtered = items.filter(it => {
       if (!query) return true;
@@ -923,7 +907,7 @@
     });
 
     if (filtered.length === 0) {
-      container.innerHTML = '<p style="color:var(--muted); margin:0;">Ingen klip at vise.</p>';
+      container.innerHTML = '<p style="color:var(--muted); margin:0;">Intet indhold at vise.</p>';
       document.getElementById('showMoreWrap').style.display = 'none';
       return;
     }
@@ -932,7 +916,7 @@
     const moreWrap = document.getElementById('showMoreWrap');
     if (!showAllItems && !query && filtered.length > DEFAULT_LIMIT) {
       moreWrap.style.display = 'block';
-      document.getElementById('btnShowAll').textContent = `Vis alle ${filtered.length} klip`;
+      document.getElementById('btnShowAll').textContent = `Vis alle (${filtered.length})`;
     } else {
       moreWrap.style.display = 'none';
     }
@@ -982,8 +966,8 @@
               <input type="text" id="etags_${it.id}" value="${escapeHtml(it.tags)}">
             </div>
             <div class="edit-buttons">
-              <button type="button" class="btn btn-green btn-sm" onclick="saveEditedClip('${it.id}')">Gem</button>
               <button type="button" class="btn btn-sm" onclick="toggleEdit('${it.id}')">Annuller</button>
+              <button type="button" class="btn btn-green btn-sm" onclick="saveEditedClip('${it.id}')">Gem</button>
             </div>
           </div>
         </div>
@@ -991,7 +975,7 @@
     }).join('');
   }
 
-  // --- Handlinger på eksisterende klip ---
+  // --- Handlinger på eksisterende indhold ---
   window.toggleEdit = function(id) {
     const panel = document.getElementById('edit_' + id);
     if (panel) panel.classList.toggle('open');
@@ -1023,18 +1007,18 @@
       tags
     };
 
-    const ok = await saveFeedToGitHub(`Opdateret klip: ${title}`);
+    const ok = await saveFeedToGitHub(`Opdateret: ${title}`);
     if (!ok) items[idx] = backup;
   };
 
   window.deleteClip = async function(id) {
     const target = items.find(x => x.id === id);
     if (!target) return;
-    if (!confirm(`Er du sikker på, at du vil slette klippet:\n"${target.title}"?`)) return;
+    if (!confirm(`Er du sikker på, at du vil slette:\n"${target.title}"?`)) return;
 
     const prevItems = [...items];
     items = items.filter(x => x.id !== id);
-    const ok = await saveFeedToGitHub(`Slettet klip: ${target.title}`);
+    const ok = await saveFeedToGitHub(`Slettet: ${target.title}`);
     if (!ok) items = prevItems;
   };
 
@@ -1052,16 +1036,6 @@
       e.preventDefault();
       const inputToken = document.getElementById('loginTokenInput').value;
       unlockAppWithToken(inputToken, false);
-    });
-
-    document.getElementById('btnLogout').addEventListener('click', () => {
-      if (confirm('Vil du fjerne den gemte GitHub-nøgle fra denne browser?')) {
-        lockApp();
-      }
-    });
-
-    document.getElementById('btnResetNow').addEventListener('click', () => {
-      document.getElementById('newPubDate').value = getNowLocalInput();
     });
 
     document.getElementById('addClipForm').addEventListener('submit', async (e) => {
@@ -1087,7 +1061,7 @@
       };
 
       items.unshift(newItem);
-      const ok = await saveFeedToGitHub(`Tilføjet klip: ${title}`);
+      const ok = await saveFeedToGitHub(`Tilføjet: ${title}`);
       btn.disabled = false;
 
       if (ok) {
