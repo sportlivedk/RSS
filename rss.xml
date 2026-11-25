@@ -2,10 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SportLive RSS Feed</title>
-    <link>https://sportlive.local/</link>
-    <atom:link href="http://sportlive.vercel.app/rss" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>
+    <link>https://www.sport-live.dk/</link>
+    <atom:link href="https://sportlivedk.github.io/RSS/rss.xml" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>
     <description>Latest submissions from SportLive</description>
-    <lastBuildDate>Thu, 19 Nov 2026 21:15:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 25 Nov 2026 18:05:00 +0000</lastBuildDate>
+    <item>
+      <title>Basketball: Horsens IC - Bakken Bears</title>
+      <link>http://www.detteerentest.com/test.mp4</link>
+      <pubDate>Wed, 25 Nov 2026 17:56:00 +0000</pubDate>
+      <enclosure url="http://www.detteerentest.com/test.png" type="image/jpeg" length="0" />
+      <guid>http://www.detteerentest.com/test.mp4</guid>
+      <category>basketball, basketligaen, sport</category>
+    </item>
     <item>
       <title>Basketligaen: Værløse Blue Hawks - BC Copenhagen</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC915404009.mp4</link>
@@ -191,7 +199,7 @@
       <category>Basketligaen, Holbæk-Stenhus, BMS Herlev</category>
     </item>
     <item>
-      <title>Håndbold VM for klubhold: Füchse Berlin - Al Ahly </title>
+      <title>Håndbold VM for klubhold: Füchse Berlin - Al Ahly</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC003621004..mp4</link>
       <pubDate>Tue, 29 Sep 2026 21:30:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC922333001.png" type="image/jpeg" length="0" />
@@ -199,7 +207,7 @@
       <category>Håndbold, VM for klubhold, Fuchse Berlin, Al Ahly</category>
     </item>
     <item>
-      <title>Håndbold VM for klubhold: Füchse Berlin - Al Ahly </title>
+      <title>Håndbold VM for klubhold: Füchse Berlin - Al Ahly</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC003621004..mp4</link>
       <pubDate>Tue, 29 Sep 2026 21:30:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC922333001.png" type="image/jpeg" length="0" />
@@ -703,7 +711,7 @@
       <category>Volleyball, European League, Rumænien-Danmark (m)</category>
     </item>
     <item>
-      <title>Volleyball European League Tjekkiet Danmark </title>
+      <title>Volleyball European League Tjekkiet Danmark</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC922386012-1.mp4</link>
       <pubDate>Sun, 14 Jun 2026 19:07:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/thumb-F3DKC9223860121.png" type="image/jpeg" length="0" />
@@ -807,7 +815,7 @@
       <category>Basketball, Finale 4, Team FOG Naestved, Bakken Bears</category>
     </item>
     <item>
-      <title> Finale 1: Næstved Bordtennis-Roskilde BTK 61</title>
+      <title>Finale 1: Næstved Bordtennis-Roskilde BTK 61</title>
       <link>http://89.188.72.190/sportlive/Highligts-F3DKC925322003.mp4</link>
       <pubDate>Fri, 22 May 2026 22:07:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC925322001.png" type="image/jpeg" length="0" />
@@ -831,7 +839,7 @@
       <category>Bordtennisligaen</category>
     </item>
     <item>
-      <title> Finale 2: Team FOG Næstved-Bakken Bears</title>
+      <title>Finale 2: Team FOG Næstved-Bakken Bears</title>
       <link>http://89.188.72.190/sportlive/Highlight-F3DKC915393039.mp4</link>
       <pubDate>Mon, 18 May 2026 21:55:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC915393025.png" type="image/jpeg" length="0" />
@@ -871,7 +879,7 @@
       <category>Bronzekamp, Svendborg Rabbits, Horsens IC</category>
     </item>
     <item>
-      <title> Coppa Italia Finale: Lazio-Inter</title>
+      <title>Coppa Italia Finale: Lazio-Inter</title>
       <link>http://89.188.72.190/sportlive/Hightlights-F3DKC917357014.mp4</link>
       <pubDate>Wed, 13 May 2026 23:12:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC917357014.png" type="image/jpeg" length="0" />
@@ -959,7 +967,7 @@
       <category>Basketligaen, Svendborg Rabbits, Team FOG Næstved</category>
     </item>
     <item>
-      <title>  Liga PortugalSporting-Tondela</title>
+      <title>Liga PortugalSporting-Tondela</title>
       <link>http://89.188.72.190/sportlive/highlight-F3DKC917489019.mp4</link>
       <pubDate>Wed, 29 Apr 2026 23:30:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC917489019.png" type="image/jpeg" length="0" />
@@ -1039,7 +1047,7 @@
       <category>Liga Portugal, R29, Benfica - Nacional</category>
     </item>
     <item>
-      <title> DM-finaler for damer og herrer</title>
+      <title>DM-finaler for damer og herrer</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC912154001.mp4</link>
       <pubDate>Sun, 12 Apr 2026 15:16:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/thumb-F3DKC912154001.png" type="image/jpeg" length="0" />
@@ -1087,7 +1095,7 @@
       <category>Futsal, WM Qualifiers</category>
     </item>
     <item>
-      <title> Futsal: WM Qualifiers:  Malta - Andorra</title>
+      <title>Futsal: WM Qualifiers:  Malta - Andorra</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC916153002.mp4</link>
       <pubDate>Thu, 09 Apr 2026 17:51:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC916153002.png" type="image/jpeg" length="0" />
@@ -1343,7 +1351,7 @@
       <category>Cykelløb, cykling, Tour de Provence 2026, Forcalquier-Montagne de Lure, 2.etape</category>
     </item>
     <item>
-      <title>2. etape, Tour de Provence 2026 </title>
+      <title>2. etape, Tour de Provence 2026</title>
       <link>http://89.188.72.190/sportlive/Highlights_F3DKC926013002.mov</link>
       <pubDate>Sat, 14 Feb 2026 18:08:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC926013002.png" type="image/jpeg" length="0" />
@@ -1578,7 +1586,7 @@
       <title>Liga Portugal: Sporting vs Rio Ave</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC917489010.mp4</link>
       <pubDate>Sun, 28 Dec 2025 21:25:00 +0000</pubDate>
-      <enclosure url=" http://89.188.72.190/sportlive/Thumb-F3DKC917489010.png" type="image/jpeg" length="0" />
+      <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC917489010.png" type="image/jpeg" length="0" />
       <guid>http://89.188.72.190/sportlive/Highlights-F3DKC917489010.mp4</guid>
       <category>Liga portugal, fodbold, sporting, rio ave</category>
     </item>
@@ -1639,7 +1647,7 @@
       <category>Basketbal, Holbæk-Stenhus, BK Amager</category>
     </item>
     <item>
-      <title>Bordtennis: Truls Möregårdh - Anders Lind </title>
+      <title>Bordtennis: Truls Möregårdh - Anders Lind</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC9174.mp4</link>
       <pubDate>Wed, 10 Dec 2025 15:25:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/THUMP-F3DKC9174.png" type="image/jpeg" length="0" />
@@ -1695,7 +1703,7 @@
       <category>Basketball, Landskamp, Ukraine, Danmark</category>
     </item>
     <item>
-      <title>Fodbold Liga Portugal R12: Sporting - Estrela </title>
+      <title>Fodbold Liga Portugal R12: Sporting - Estrela</title>
       <link>http://89.188.72.190/sportlive/Highlights-F3DKC917489006.mov</link>
       <pubDate>Sun, 30 Nov 2025 16:38:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC917489006.png" type="image/jpeg" length="0" />
@@ -1719,7 +1727,7 @@
       <category>Basketball, Landskamp, Danmark, Spanien</category>
     </item>
     <item>
-      <title> BK Amager - Værløse Blue Hawks</title>
+      <title>BK Amager - Værløse Blue Hawks</title>
       <link>http://89.188.72.190/sportlive/highlight-3DKC915542098.mov</link>
       <pubDate>Thu, 20 Nov 2025 21:43:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thump_F3DKC915542089.png" type="image/jpeg" length="0" />
@@ -1911,7 +1919,7 @@
       <category>Fodbold, Liga Portugal, Tondela, Sporting</category>
     </item>
     <item>
-      <title> København Futsal - Aalborg Futsal Klub</title>
+      <title>København Futsal - Aalborg Futsal Klub</title>
       <link>http://89.188.72.190/sportlive/Hightligt-F3DKC916439002.mov</link>
       <pubDate>Sun, 26 Oct 2025 17:05:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thump-F3DKC916439002.png" type="image/jpeg" length="0" />
@@ -2127,7 +2135,7 @@
       <category>Fiba 3X3</category>
     </item>
     <item>
-      <title>FIba 3X3 Dag 2  Danmark -Litauen </title>
+      <title>FIba 3X3 Dag 2  Danmark -Litauen</title>
       <link>http://89.188.72.190/sportlive/highlight-f3dkc915374042.mov</link>
       <pubDate>Sat, 06 Sep 2025 16:36:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/thumb-f3dkc915374042.png" type="image/jpeg" length="0" />
@@ -2143,7 +2151,7 @@
       <category>Fiba 3X3</category>
     </item>
     <item>
-      <title> Billard: DM i Skomar for 4-mandshold</title>
+      <title>Billard: DM i Skomar for 4-mandshold</title>
       <link>http://89.188.72.190/sportlive/Highlight-F3DKC930647003.mov</link>
       <pubDate>Sat, 30 Aug 2025 19:57:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb-F3DKC930647003.png" type="image/jpeg" length="0" />
@@ -2175,7 +2183,7 @@
       <category>Tennis, kb, b93, dm, finale for hold</category>
     </item>
     <item>
-      <title> Basketball: VM Prækvalifikation: Danmark - Kroatien (m)</title>
+      <title>Basketball: VM Prækvalifikation: Danmark - Kroatien (m)</title>
       <link>http://89.188.72.190/sportlive/Hightlights_F3DKC915234004.mov</link>
       <pubDate>Wed, 20 Aug 2025 18:00:00 +0000</pubDate>
       <enclosure url="http://89.188.72.190/sportlive/Thumb_F3DKC915234004.png" type="image/jpeg" length="0" />
@@ -2319,11 +2327,11 @@
       <category>Basketball, Danmark, Norge, VM</category>
     </item>
     <item>
-      <title>Highlights ITF Gentofte Open Semifinale </title>
-      <link> http://89.188.72.190/sportlive/Highlights-F3DKC918233006.mov</link>
+      <title>Highlights ITF Gentofte Open Semifinale</title>
+      <link>http://89.188.72.190/sportlive/Highlights-F3DKC918233006.mov</link>
       <pubDate>Sat, 02 Aug 2025 13:53:00 +0000</pubDate>
-      <enclosure url=" http://89.188.72.190/sportlive/thumb-F3DKC918233006.png" type="image/jpeg" length="0" />
-      <guid> http://89.188.72.190/sportlive/Highlights-F3DKC918233006.mov</guid>
+      <enclosure url="http://89.188.72.190/sportlive/thumb-F3DKC918233006.png" type="image/jpeg" length="0" />
+      <guid>http://89.188.72.190/sportlive/Highlights-F3DKC918233006.mov</guid>
       <category>Tennis, Gentofte, IFT, ITF World Tennis Tour M25, Christian Sigsgaard</category>
     </item>
     <item>
