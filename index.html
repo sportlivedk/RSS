@@ -75,6 +75,19 @@
       font-size: 0.92rem;
     }
 
+    /* Præcis vertikal centrering under "Logger automatisk ind ..." */
+    .login-card.auto-loading {
+      padding: 46px 28px 44px;
+    }
+
+    .login-card.auto-loading img {
+      margin-top: 0;
+    }
+
+    .login-card.auto-loading p {
+      margin-bottom: 0;
+    }
+
     .login-card .form-group {
       text-align: left;
     }
@@ -325,14 +338,14 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 16px;
+      gap: 18px;
     }
 
     .clip-meta {
       flex: 1;
       min-width: 0;
       display: grid;
-      grid-template-columns: 96px 1fr;
+      grid-template-columns: 96px minmax(0, 1fr);
       gap: 4px 10px;
       font-size: 0.87rem;
       margin: 0;
@@ -345,7 +358,14 @@
 
     .clip-meta dd {
       margin: 0;
-      word-break: break-all;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .clip-meta dd.link-cell {
+      color: var(--blue);
     }
 
     .clip-meta a {
@@ -355,11 +375,16 @@
 
     .clip-meta a:hover { text-decoration: underline; }
 
-    /* Lille 16:9 thumbnail under Rediger og Slet */
+    /* Lille 16:9 thumbnail rykket ned under Rediger og Slet */
     .clip-thumb-link {
       display: block;
       flex-shrink: 0;
+      margin-top: 15px;
       text-decoration: none;
+    }
+
+    .clip-body > .clip-thumb-box {
+      margin-top: 15px;
     }
 
     .clip-thumb-box {
@@ -396,6 +421,11 @@
     @media (max-width: 580px) {
       .clip-body {
         flex-direction: column;
+      }
+
+      .clip-thumb-link,
+      .clip-body > .clip-thumb-box {
+        margin-top: 4px;
       }
     }
 
@@ -485,7 +515,7 @@
 
   <!-- LOGIN-VINDUE -->
   <div class="login-wrapper" id="loginScreen">
-    <div class="login-card">
+    <div class="login-card" id="loginCard">
       <img src="logo.png" alt="SPORT LIVE" onerror="this.style.display='none'">
       <h1>Højdepunkter til Ekstra Bladet</h1>
       <p id="loginSubtitle">Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.</p>
@@ -702,6 +732,7 @@
   }
 
   async function unlockAppWithToken(token, isAutoLogin = false) {
+    const loginCard = document.getElementById('loginCard');
     const btn = document.getElementById('btnLoginSubmit');
     const form = document.getElementById('loginForm');
     const subtitle = document.getElementById('loginSubtitle');
@@ -710,18 +741,19 @@
     btn.disabled = true;
     btn.textContent = 'Kontrollerer nøgle ...';
     if (isAutoLogin) {
+      loginCard.classList.add('auto-loading');
       form.style.display = 'none';
       subtitle.textContent = 'Logger automatisk ind ...';
     }
 
     const check = await verifyGitHubToken(token);
 
-    btn.disabled = false;
-    btn.textContent = 'Log ind';
-    form.style.display = 'block';
-    subtitle.textContent = 'Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.';
-
     if (!check.ok) {
+      loginCard.classList.remove('auto-loading');
+      btn.disabled = false;
+      btn.textContent = 'Log ind';
+      form.style.display = 'block';
+      subtitle.textContent = 'Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.';
       localStorage.removeItem(TOKEN_STORAGE_KEY);
       activeToken = '';
       document.getElementById('appContent').style.display = 'none';
@@ -733,6 +765,11 @@
     activeToken = token.trim();
     localStorage.setItem(TOKEN_STORAGE_KEY, activeToken);
     document.getElementById('loginScreen').style.display = 'none';
+    loginCard.classList.remove('auto-loading');
+    btn.disabled = false;
+    btn.textContent = 'Log ind';
+    form.style.display = 'block';
+    subtitle.textContent = 'Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.';
     document.getElementById('appContent').style.display = 'block';
     document.getElementById('newPubDate').value = getNowLocalInput();
     await loadFeedFromGitHub();
@@ -741,6 +778,7 @@
   function lockApp(reasonMsg = '') {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
     activeToken = '';
+    document.getElementById('loginCard').classList.remove('auto-loading');
     document.getElementById('loginTokenInput').value = '';
     document.getElementById('appContent').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'flex';
@@ -1086,6 +1124,13 @@
 
     container.innerHTML = visible.map(it => {
       const parsedDate = parsePubDate(it.pubDate);
+      const linkHtml = it.link
+        ? `<a href="${escapeHtml(it.link)}" target="_blank" rel="noopener" title="${escapeHtml(it.link)}">${escapeHtml(it.link)}</a>`
+        : '—';
+      const thumbHtml = it.thumb
+        ? `<a href="${escapeHtml(it.thumb)}" target="_blank" rel="noopener" title="${escapeHtml(it.thumb)}">${escapeHtml(it.thumb)}</a>`
+        : '—';
+
       return `
         <div class="clip-item" id="card_${it.id}" data-id="${it.id}">
           <div class="clip-top">
@@ -1101,11 +1146,11 @@
               <dt>Dato:</dt>
               <dd>${escapeHtml(parsedDate.display)}</dd>
               <dt>Link:</dt>
-              <dd><a href="${escapeHtml(it.link)}" target="_blank" rel="noopener">${escapeHtml(it.link)}</a></dd>
+              <dd class="${it.link ? 'link-cell' : ''}">${linkHtml}</dd>
               <dt>Thumbnail:</dt>
-              <dd><a href="${escapeHtml(it.thumb)}" target="_blank" rel="noopener">${escapeHtml(it.thumb)}</a></dd>
+              <dd class="${it.thumb ? 'link-cell' : ''}">${thumbHtml}</dd>
               <dt>Tags:</dt>
-              <dd>${escapeHtml(it.tags || '—')}</dd>
+              <dd title="${escapeHtml(it.tags || '')}">${escapeHtml(it.tags || '—')}</dd>
             </dl>
             ${renderThumbnailBox(it.thumb)}
           </div>
