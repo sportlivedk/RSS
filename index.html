@@ -1,0 +1,1011 @@
+﻿<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPORT LIVE – Højdepunkter til Ekstra Bladet</title>
+  <style>
+    :root {
+      --bg: #f4f5f7;
+      --card: #ffffff;
+      --text: #1a1d21;
+      --muted: #5f6672;
+      --border: #d8dde6;
+      --green: #1e8e3e;
+      --green-hover: #187332;
+      --blue: #0b57d0;
+      --danger: #c5221f;
+      --warn-bg: #fef7e0;
+      --warn-border: #f29900;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 32px 16px 64px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    /* Header & Logo */
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    header img {
+      max-height: 68px;
+      max-width: 260px;
+      height: auto;
+      display: block;
+      margin: 0 auto 12px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .feed-actions {
+      margin-top: 28px; /* Dobbelt linjeskift-luft under overskriften */
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .card h2 {
+      margin: 0 0 16px;
+      font-size: 1.15rem;
+    }
+
+    /* GitHub Connection Bar */
+    .gh-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      padding: 10px 16px;
+      background: #eef2f6;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .gh-status-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background: #9aa0a6;
+    }
+
+    .gh-status-dot.ok { background: var(--green); }
+
+    .gh-settings {
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .gh-settings.open { display: block; }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    .label-action {
+      font-weight: 400;
+      font-size: 0.82rem;
+      color: var(--blue);
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="password"],
+    input[type="datetime-local"] {
+      width: 100%;
+      padding: 9px 11px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(11, 87, 208, 0.15);
+    }
+
+    /* Buttons & Links */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn:hover { background: #f1f3f5; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-green {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    .btn-green:hover {
+      background: var(--green-hover);
+      border-color: var(--green-hover);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+      border-color: #f1c1c0;
+    }
+
+    .btn-danger:hover {
+      background: #fce8e6;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.84rem;
+    }
+
+    /* Status Messages */
+    #statusBanner {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 18px;
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+
+    #statusBanner.info { display: block; background: #e8f0fe; color: #174ea6; border: 1px solid #c2d7fa; }
+    #statusBanner.success { display: block; background: #e6f4ea; color: #137333; border: 1px solid #b7dfbf; }
+    #statusBanner.error { display: block; background: #fce8e6; color: #a50e0e; border: 1px solid #f5c2c0; }
+
+    /* Clip List */
+    .list-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .list-header h2 { margin: 0; }
+
+    .search-box {
+      width: 280px;
+      max-width: 100%;
+    }
+
+    .clip-item {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 15px 18px;
+      margin-bottom: 12px;
+      background: #fafbfc;
+    }
+
+    .clip-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .clip-title {
+      font-weight: 700;
+      font-size: 1.02rem;
+      margin: 0;
+      word-break: break-word;
+    }
+
+    .clip-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .clip-meta {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 4px 10px;
+      font-size: 0.87rem;
+    }
+
+    .clip-meta dt {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .clip-meta dd {
+      margin: 0;
+      word-break: break-all;
+    }
+
+    .clip-meta a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .clip-meta a:hover { text-decoration: underline; }
+
+    .clip-edit-panel {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .clip-edit-panel.open { display: block; }
+
+    .edit-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .show-more-wrap {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    /* Popup Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 900px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h3 { margin: 0; font-size: 1.05rem; }
+
+    .modal-body {
+      padding: 16px 20px;
+      overflow: auto;
+      background: #1e1e1e;
+      color: #e8eaed;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.83rem;
+      white-space: pre;
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <img src="logo.png" alt="SPORT LIVE" onerror="this.style.display='none'">
+    <h1>Højdepunkter til Ekstra Bladet</h1>
+
+    <div class="feed-actions">
+      <button type="button" class="btn" id="btnShowPopup">Vis RSS-feed i popup</button>
+      <a href="rss.xml" target="_blank" rel="noopener" class="btn" id="linkOpenFeed">Åbn RSS-fil i ny fane ↗</a>
+      <button type="button" class="btn" id="btnCopyUrl">Kopiér URL til RSS-feed</button>
+    </div>
+  </header>
+
+  <!-- GitHub forbindelseslinje -->
+  <div class="gh-bar">
+    <div>
+      <span class="gh-status-dot" id="ghDot"></span>
+      <span id="ghStatusText">Tjekker GitHub-forbindelse...</span>
+    </div>
+    <button type="button" class="btn btn-sm" id="btnToggleSettings">GitHub-opsætning</button>
+  </div>
+
+  <!-- GitHub indstillinger -->
+  <div class="card gh-settings" id="ghSettingsCard">
+    <h2>GitHub-forbindelse (gemmes kun lokalt i din browser)</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cfgOwner">GitHub-konto / ejer</label>
+        <input type="text" id="cfgOwner" value="sportlivedk">
+      </div>
+      <div class="form-group">
+        <label for="cfgRepo">Repository-navn</label>
+        <input type="text" id="cfgRepo" value="RSS">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cfgBranch">Branch</label>
+        <input type="text" id="cfgBranch" value="main">
+      </div>
+      <div class="form-group">
+        <label for="cfgPath">RSS-filnavn</label>
+        <input type="text" id="cfgPath" value="rss.xml">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="cfgToken">GitHub Personal Access Token (kræves for at gemme)</label>
+      <input type="password" id="cfgToken" placeholder="github_pat_...">
+    </div>
+    <button type="button" class="btn btn-green" id="btnSaveConfig">Gem forbindelse og indlæs feed</button>
+  </div>
+
+  <div id="statusBanner"></div>
+
+  <!-- Opret nyt klip -->
+  <div class="card">
+    <h2>Tilføj nyt højdepunktsklip</h2>
+    <form id="addClipForm">
+      <div class="form-group">
+        <label for="newTitle">1) Titel</label>
+        <input type="text" id="newTitle" required placeholder="Fx Highlights: Conference League: Havnar Bóltfelag – Brøndby IF">
+      </div>
+
+      <div class="form-group">
+        <label for="newVideoUrl">2) URL til video</label>
+        <input type="url" id="newVideoUrl" required placeholder="Fx http://89.188.72.190/sportlive/Highlights_F3DKC917246001.mp4">
+      </div>
+
+      <div class="form-group">
+        <label for="newPubDate">
+          <span>3) Udgivelsesdato</span>
+          <button type="button" class="label-action" id="btnResetNow">Sæt til aktuel dato og tid</button>
+        </label>
+        <input type="datetime-local" id="newPubDate" required>
+      </div>
+
+      <div class="form-group">
+        <label for="newThumbUrl">4) URL til billede</label>
+        <input type="url" id="newThumbUrl" required placeholder="Fx http://89.188.72.190/sportlive/Thumb_F3DKC917246001.png">
+      </div>
+
+      <div class="form-group">
+        <label for="newTags">5) Tags (adskilles med komma)</label>
+        <input type="text" id="newTags" placeholder="Fx Conference League, Brøndby, Fodbold, sport">
+      </div>
+
+      <button type="submit" class="btn btn-green" id="btnSubmitNew">Gem</button>
+    </form>
+  </div>
+
+  <!-- Oversigt over eksisterende klip -->
+  <div class="card">
+    <div class="list-header">
+      <h2 id="listHeading">Klip i RSS-filen (0)</h2>
+      <input type="text" id="searchInput" class="search-box" placeholder="Søg i titel, link eller tags...">
+    </div>
+
+    <div id="clipsContainer">Indlæser klip...</div>
+
+    <div class="show-more-wrap" id="showMoreWrap" style="display:none;">
+      <button type="button" class="btn" id="btnShowAll">Vis alle klip</button>
+    </div>
+  </div>
+</div>
+
+<!-- Popup-vindue til visning af rå RSS-kode -->
+<div class="modal-backdrop" id="xmlModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Indhold af RSS-feed (<span id="modalFileLabel">rss.xml</span>)</h3>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn btn-sm" id="btnCopyXml">Kopiér XML</button>
+        <button type="button" class="btn btn-sm" id="btnCloseModal">Luk ✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="xmlModalContent"></div>
+  </div>
+</div>
+
+<script>
+  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const DEFAULT_LIMIT = 25;
+
+  let items = [];
+  let currentSha = null;
+  let showAllItems = false;
+
+  // --- Konfigurations-hjælpere ---
+  function getConfig() {
+    return {
+      owner: (localStorage.getItem('sl_rss_owner') || 'sportlivedk').trim(),
+      repo: (localStorage.getItem('sl_rss_repo') || 'RSS').trim(),
+      branch: (localStorage.getItem('sl_rss_branch') || 'main').trim(),
+      path: (localStorage.getItem('sl_rss_path') || 'rss.xml').trim(),
+      token: (localStorage.getItem('sl_rss_token') || '').trim()
+    };
+  }
+
+  function getPublicFeedUrl() {
+    const cfg = getConfig();
+    return `https://${cfg.owner}.github.io/${cfg.repo}/${cfg.path}`;
+  }
+
+  function updateHeaderLinks() {
+    const feedUrl = getPublicFeedUrl();
+    const cfg = getConfig();
+    document.getElementById('linkOpenFeed').href = feedUrl;
+    document.getElementById('modalFileLabel').textContent = cfg.path;
+
+    const dot = document.getElementById('ghDot');
+    const txt = document.getElementById('ghStatusText');
+    if (cfg.token) {
+      dot.className = 'gh-status-dot ok';
+      txt.textContent = `Klar til at gemme i ${cfg.owner}/${cfg.repo} (${cfg.path})`;
+    } else {
+      dot.className = 'gh-status-dot';
+      txt.textContent = `Læsetilstand (${cfg.owner}/${cfg.repo}) – tilføj GitHub-token for at kunne gemme`;
+    }
+  }
+
+  function showStatus(msg, type = 'info') {
+    const el = document.getElementById('statusBanner');
+    el.textContent = msg;
+    el.className = type;
+    if (type === 'success') {
+      setTimeout(() => {
+        if (el.textContent === msg) el.style.display = 'none';
+      }, 5000);
+    }
+  }
+
+  // --- Dato- og tidsformatering ---
+  function getNowLocalInput() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    return `${y}-${m}-${d}T${hh}:${mm}`;
+  }
+
+  function localInputToPubDate(dtLocal) {
+    const [datePart, timePart] = dtLocal.split('T');
+    const [y, m, d] = datePart.split('-').map(Number);
+    const [hh, mm] = (timePart || '00:00').split(':').map(Number);
+    const utcObj = new Date(Date.UTC(y, m - 1, d, hh, mm, 0));
+    const dayName = DAYS[utcObj.getUTCDay()];
+    const dd = String(d).padStart(2, '0');
+    const monName = MONTHS[m - 1];
+    const HH = String(hh).padStart(2, '0');
+    const MM = String(mm).padStart(2, '0');
+    return `${dayName}, ${dd} ${monName} ${y} ${HH}:${MM}:00 +0000`;
+  }
+
+  function parsePubDate(pubDateStr) {
+    const d = new Date((pubDateStr || '').trim());
+    if (isNaN(d.getTime())) {
+      const fallback = getNowLocalInput();
+      return { timestamp: 0, dtLocal: fallback, display: pubDateStr || 'Ukendt dato' };
+    }
+    const y = d.getUTCFullYear();
+    const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    const hh = String(d.getUTCHours()).padStart(2, '0');
+    const mm = String(d.getUTCMinutes()).padStart(2, '0');
+    return {
+      timestamp: d.getTime(),
+      dtLocal: `${y}-${m}-${day}T${hh}:${mm}`,
+      display: `${day}-${m}-${y} ${hh}:${mm}`
+    };
+  }
+
+  // --- UTF-8 Base64 & XML-hjælpere ---
+  function utf8ToBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    const chunk = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunk) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
+  }
+
+  function base64ToUtf8(b64) {
+    const binary = atob(b64.replace(/\s/g, ''));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  function escapeXml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+
+  function sortItemsDesc() {
+    items.sort((a, b) => parsePubDate(b.pubDate).timestamp - parsePubDate(a.pubDate).timestamp);
+  }
+
+  function buildXmlString() {
+    const feedUrl = getPublicFeedUrl();
+    const lastBuild = localInputToPubDate(getNowLocalInput());
+    const itemBlocks = items.map(it => [
+      '    <item>',
+      `      <title>${escapeXml(it.title)}</title>`,
+      `      <link>${escapeXml(it.link)}</link>`,
+      `      <pubDate>${escapeXml(it.pubDate)}</pubDate>`,
+      `      <enclosure url="${escapeXml(it.thumb)}" type="image/jpeg" length="0" />`,
+      `      <guid>${escapeXml(it.link)}</guid>`,
+      `      <category>${escapeXml(it.tags)}</category>`,
+      '    </item>'
+    ].join('\n')).join('\n');
+
+    return [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
+      '  <channel>',
+      '    <title>SportLive RSS Feed</title>',
+      '    <link>https://www.sport-live.dk/</link>',
+      `    <atom:link href="${escapeXml(feedUrl)}" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>`,
+      '    <description>Latest submissions from SportLive</description>',
+      `    <lastBuildDate>${escapeXml(lastBuild)}</lastBuildDate>`,
+      itemBlocks,
+      '  </channel>',
+      '</rss>',
+      ''
+    ].join('\n');
+  }
+
+  function parseXmlToItems(xmlText) {
+    const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+    if (doc.querySelector('parsererror')) {
+      throw new Error('RSS-filen indeholder ugyldig XML.');
+    }
+    const nodes = Array.from(doc.querySelectorAll('channel > item'));
+    return nodes.map((node, idx) => {
+      const getTxt = tag => node.querySelector(tag)?.textContent ?? '';
+      const enc = node.querySelector('enclosure');
+      return {
+        id: 'item_' + Date.now() + '_' + idx,
+        title: getTxt('title').trim(),
+        link: getTxt('link').trim(),
+        pubDate: getTxt('pubDate').trim(),
+        thumb: (enc?.getAttribute('url') || '').trim(),
+        tags: getTxt('category').trim()
+      };
+    });
+  }
+
+  // --- URL-tjek mod tastefejl ---
+  function validateUrlsBeforeSave(videoUrl, thumbUrl) {
+    const warnings = [];
+    if (/\s/.test(videoUrl)) warnings.push('Video-URL indeholder mellemrum.');
+    if (!/\.(mp4|mov)$/i.test(videoUrl)) warnings.push('Video-URL slutter ikke på .mp4 eller .mov.');
+    if (/\s/.test(thumbUrl)) warnings.push('Billede-URL indeholder mellemrum.');
+    if (!/\.(png|jpg|jpeg)$/i.test(thumbUrl)) warnings.push('Billede-URL slutter ikke på .png eller .jpg.');
+
+    if (warnings.length > 0) {
+      return confirm('Bemærk:\n- ' + warnings.join('\n- ') + '\n\nVil du gemme klippet alligevel?');
+    }
+    return true;
+  }
+
+  // --- GitHub API ---
+  async function loadFeedFromGitHub() {
+    const cfg = getConfig();
+    updateHeaderLinks();
+    const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}`;
+    const headers = { 'Accept': 'application/vnd.github+json' };
+    if (cfg.token) headers['Authorization'] = `Bearer ${cfg.token}`;
+
+    try {
+      const res = await fetch(apiUrl, { cache: 'no-store', headers });
+      if (res.status === 404) {
+        items = [];
+        currentSha = null;
+        renderList();
+        showStatus(`Ingen ${cfg.path} fundet i ${cfg.owner}/${cfg.repo} endnu. Filen oprettes automatisk, når du gemmer dit første klip.`, 'info');
+        return;
+      }
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      currentSha = data.sha;
+      const xmlText = base64ToUtf8(data.content);
+      items = parseXmlToItems(xmlText);
+      sortItemsDesc();
+      renderList();
+    } catch (err) {
+      document.getElementById('clipsContainer').textContent = 'Kunne ikke hente RSS-filen endnu.';
+      showStatus(`Kunne ikke hente fra GitHub (${err.message}). Tjek at repositoriet ${cfg.owner}/${cfg.repo} er oprettet.`, 'error');
+    }
+  }
+
+  async function saveFeedToGitHub(commitMessage) {
+    const cfg = getConfig();
+    if (!cfg.token) {
+      document.getElementById('ghSettingsCard').classList.add('open');
+      showStatus('Indsæt dit GitHub Personal Access Token under GitHub-opsætning før du kan gemme.', 'error');
+      return false;
+    }
+
+    sortItemsDesc();
+    const xmlString = buildXmlString();
+    const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
+    const headers = {
+      'Accept': 'application/vnd.github+json',
+      'Authorization': `Bearer ${cfg.token}`,
+      'Content-Type': 'application/json'
+    };
+
+    try {
+      showStatus('Gemmer i GitHub...', 'info');
+
+      // Hent altid frisk SHA lige inden vi skriver, så vi undgår versionskonflikter
+      const checkRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}`, { cache: 'no-store', headers });
+      if (checkRes.ok) {
+        const checkData = await checkRes.json();
+        currentSha = checkData.sha;
+      } else if (checkRes.status === 404) {
+        currentSha = null;
+      }
+
+      const body = {
+        message: commitMessage,
+        content: utf8ToBase64(xmlString),
+        branch: cfg.branch
+      };
+      if (currentSha) body.sha = currentSha;
+
+      const putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(body)
+      });
+
+      if (!putRes.ok) {
+        const errData = await putRes.json().catch(() => ({}));
+        throw new Error(errData.message || `HTTP ${putRes.status}`);
+      }
+
+      const result = await putRes.json();
+      currentSha = result.content.sha;
+      renderList();
+      showStatus('RSS-filen er opdateret på GitHub.', 'success');
+      return true;
+    } catch (err) {
+      showStatus(`Fejl under gemning til GitHub: ${err.message}`, 'error');
+      return false;
+    }
+  }
+
+  // --- Visning af oversigt ---
+  function renderList() {
+    const container = document.getElementById('clipsContainer');
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    document.getElementById('listHeading').textContent = `Klip i RSS-filen (${items.length})`;
+
+    const filtered = items.filter(it => {
+      if (!query) return true;
+      return (
+        it.title.toLowerCase().includes(query) ||
+        it.link.toLowerCase().includes(query) ||
+        it.tags.toLowerCase().includes(query) ||
+        it.pubDate.toLowerCase().includes(query)
+      );
+    });
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<p style="color:var(--muted); margin:0;">Ingen klip at vise.</p>';
+      document.getElementById('showMoreWrap').style.display = 'none';
+      return;
+    }
+
+    const visible = (showAllItems || query) ? filtered : filtered.slice(0, DEFAULT_LIMIT);
+    const moreWrap = document.getElementById('showMoreWrap');
+    if (!showAllItems && !query && filtered.length > DEFAULT_LIMIT) {
+      moreWrap.style.display = 'block';
+      document.getElementById('btnShowAll').textContent = `Vis alle ${filtered.length} klip`;
+    } else {
+      moreWrap.style.display = 'none';
+    }
+
+    container.innerHTML = visible.map(it => {
+      const parsedDate = parsePubDate(it.pubDate);
+      return `
+        <div class="clip-item" data-id="${it.id}">
+          <div class="clip-top">
+            <h3 class="clip-title">${escapeHtml(it.title)}</h3>
+            <div class="clip-actions">
+              <button type="button" class="btn btn-sm" onclick="toggleEdit('${it.id}')">Rediger</button>
+              <button type="button" class="btn btn-sm btn-danger" onclick="deleteClip('${it.id}')">Slet</button>
+            </div>
+          </div>
+
+          <dl class="clip-meta">
+            <dt>Dato:</dt>
+            <dd>${escapeHtml(parsedDate.display)}</dd>
+            <dt>Link:</dt>
+            <dd><a href="${escapeHtml(it.link)}" target="_blank" rel="noopener">${escapeHtml(it.link)}</a></dd>
+            <dt>Thumbnail:</dt>
+            <dd><a href="${escapeHtml(it.thumb)}" target="_blank" rel="noopener">${escapeHtml(it.thumb)}</a></dd>
+            <dt>Tags:</dt>
+            <dd>${escapeHtml(it.tags || '—')}</dd>
+          </dl>
+
+          <div class="clip-edit-panel" id="edit_${it.id}">
+            <div class="form-group">
+              <label>Titel</label>
+              <input type="text" id="etitle_${it.id}" value="${escapeHtml(it.title)}">
+            </div>
+            <div class="form-group">
+              <label>URL til video</label>
+              <input type="url" id="elink_${it.id}" value="${escapeHtml(it.link)}">
+            </div>
+            <div class="form-group">
+              <label>Udgivelsesdato</label>
+              <input type="datetime-local" id="edate_${it.id}" value="${escapeHtml(parsedDate.dtLocal)}">
+            </div>
+            <div class="form-group">
+              <label>URL til billede</label>
+              <input type="url" id="ethumb_${it.id}" value="${escapeHtml(it.thumb)}">
+            </div>
+            <div class="form-group">
+              <label>Tags (adskilles med komma)</label>
+              <input type="text" id="etags_${it.id}" value="${escapeHtml(it.tags)}">
+            </div>
+            <div class="edit-buttons">
+              <button type="button" class="btn btn-green btn-sm" onclick="saveEditedClip('${it.id}')">Gem</button>
+              <button type="button" class="btn btn-sm" onclick="toggleEdit('${it.id}')">Annuller</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- Handlinger på eksisterende klip ---
+  window.toggleEdit = function(id) {
+    const panel = document.getElementById('edit_' + id);
+    if (panel) panel.classList.toggle('open');
+  };
+
+  window.saveEditedClip = async function(id) {
+    const idx = items.findIndex(x => x.id === id);
+    if (idx === -1) return;
+
+    const title = document.getElementById('etitle_' + id).value.trim();
+    const link = document.getElementById('elink_' + id).value.trim();
+    const dtLocal = document.getElementById('edate_' + id).value;
+    const thumb = document.getElementById('ethumb_' + id).value.trim();
+    const tags = document.getElementById('etags_' + id).value.trim();
+
+    if (!title || !link || !dtLocal || !thumb) {
+      alert('Udfyld venligst både titel, video-URL, dato og billede-URL.');
+      return;
+    }
+    if (!validateUrlsBeforeSave(link, thumb)) return;
+
+    const backup = { ...items[idx] };
+    items[idx] = {
+      ...items[idx],
+      title,
+      link,
+      pubDate: localInputToPubDate(dtLocal),
+      thumb,
+      tags
+    };
+
+    const ok = await saveFeedToGitHub(`Opdateret klip: ${title}`);
+    if (!ok) items[idx] = backup;
+  };
+
+  window.deleteClip = async function(id) {
+    const target = items.find(x => x.id === id);
+    if (!target) return;
+    if (!confirm(`Er du sikker på, at du vil slette klippet:\n"${target.title}"?`)) return;
+
+    const prevItems = [...items];
+    items = items.filter(x => x.id !== id);
+    const ok = await saveFeedToGitHub(`Slettet klip: ${target.title}`);
+    if (!ok) items = prevItems;
+  };
+
+  // --- Event Listeners ---
+  document.addEventListener('DOMContentLoaded', () => {
+    const cfg = getConfig();
+    document.getElementById('cfgOwner').value = cfg.owner;
+    document.getElementById('cfgRepo').value = cfg.repo;
+    document.getElementById('cfgBranch').value = cfg.branch;
+    document.getElementById('cfgPath').value = cfg.path;
+    document.getElementById('cfgToken').value = cfg.token;
+
+    if (!cfg.token) {
+      document.getElementById('ghSettingsCard').classList.add('open');
+    }
+
+    document.getElementById('newPubDate').value = getNowLocalInput();
+    loadFeedFromGitHub();
+
+    document.getElementById('btnResetNow').addEventListener('click', () => {
+      document.getElementById('newPubDate').value = getNowLocalInput();
+    });
+
+    document.getElementById('btnToggleSettings').addEventListener('click', () => {
+      document.getElementById('ghSettingsCard').classList.toggle('open');
+    });
+
+    document.getElementById('btnSaveConfig').addEventListener('click', () => {
+      localStorage.setItem('sl_rss_owner', document.getElementById('cfgOwner').value.trim());
+      localStorage.setItem('sl_rss_repo', document.getElementById('cfgRepo').value.trim());
+      localStorage.setItem('sl_rss_branch', document.getElementById('cfgBranch').value.trim());
+      localStorage.setItem('sl_rss_path', document.getElementById('cfgPath').value.trim());
+      localStorage.setItem('sl_rss_token', document.getElementById('cfgToken').value.trim());
+      document.getElementById('ghSettingsCard').classList.remove('open');
+      loadFeedFromGitHub();
+    });
+
+    document.getElementById('addClipForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('newTitle').value.trim();
+      const link = document.getElementById('newVideoUrl').value.trim();
+      const dtLocal = document.getElementById('newPubDate').value;
+      const thumb = document.getElementById('newThumbUrl').value.trim();
+      const tags = document.getElementById('newTags').value.trim();
+
+      if (!validateUrlsBeforeSave(link, thumb)) return;
+
+      const btn = document.getElementById('btnSubmitNew');
+      btn.disabled = true;
+
+      const newItem = {
+        id: 'item_' + Date.now(),
+        title,
+        link,
+        pubDate: localInputToPubDate(dtLocal),
+        thumb,
+        tags
+      };
+
+      items.unshift(newItem);
+      const ok = await saveFeedToGitHub(`Tilføjet klip: ${title}`);
+      btn.disabled = false;
+
+      if (ok) {
+        document.getElementById('addClipForm').reset();
+        document.getElementById('newPubDate').value = getNowLocalInput();
+      } else {
+        items = items.filter(x => x.id !== newItem.id);
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', renderList);
+
+    document.getElementById('btnShowAll').addEventListener('click', () => {
+      showAllItems = true;
+      renderList();
+    });
+
+    // Top-knapper: Popup, Kopiér URL
+    document.getElementById('btnShowPopup').addEventListener('click', () => {
+      document.getElementById('xmlModalContent').textContent = buildXmlString();
+      document.getElementById('xmlModal').classList.add('open');
+    });
+
+    document.getElementById('btnCloseModal').addEventListener('click', () => {
+      document.getElementById('xmlModal').classList.remove('open');
+    });
+
+    document.getElementById('xmlModal').addEventListener('click', (e) => {
+      if (e.target.id === 'xmlModal') document.getElementById('xmlModal').classList.remove('open');
+    });
+
+    document.getElementById('btnCopyXml').addEventListener('click', async (e) => {
+      await navigator.clipboard.writeText(buildXmlString());
+      const orig = e.target.textContent;
+      e.target.textContent = 'Kopieret!';
+      setTimeout(() => e.target.textContent = orig, 1800);
+    });
+
+    document.getElementById('btnCopyUrl').addEventListener('click', async (e) => {
+      await navigator.clipboard.writeText(getPublicFeedUrl());
+      const orig = e.target.textContent;
+      e.target.textContent = 'URL kopieret!';
+      setTimeout(() => e.target.textContent = orig, 1800);
+    });
+  });
+</script>
+
+</body>
+</html>
