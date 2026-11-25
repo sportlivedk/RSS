@@ -11,12 +11,12 @@
       --text: #1a1d21;
       --muted: #5f6672;
       --border: #d8dde6;
-      --green: #1e8e3e;
-      --green-hover: #187332;
-      --blue: #0b57d0;
-      --blue-hover: #0842a0;
-      --danger: #c5221f;
-      --danger-hover: #a50e0e;
+      --green: #3d7a5a;
+      --green-hover: #316349;
+      --blue: #3f6a96;
+      --blue-hover: #325578;
+      --danger: #b04c4a;
+      --danger-hover: #933d3b;
     }
 
     * { box-sizing: border-box; }
@@ -102,8 +102,8 @@
     }
 
     header img {
-      max-height: 136px;
-      max-width: min(520px, 100%);
+      max-height: 126px;
+      max-width: min(480px, 100%);
       width: auto;
       height: auto;
       display: block;
@@ -175,7 +175,7 @@
     input:focus {
       outline: none;
       border-color: var(--blue);
-      box-shadow: 0 0 0 2px rgba(11, 87, 208, 0.15);
+      box-shadow: 0 0 0 2px rgba(63, 106, 150, 0.18);
     }
 
     /* Knapper & Ikoner */
@@ -311,6 +311,7 @@
       grid-template-columns: 110px 1fr;
       gap: 4px 10px;
       font-size: 0.87rem;
+      margin: 0;
     }
 
     .clip-meta dt {
@@ -330,9 +331,19 @@
 
     .clip-meta a:hover { text-decoration: underline; }
 
+    /* Når der redigeres: Skjul Rediger/Slet samt de faste datafelter */
+    .clip-item.editing .clip-top {
+      margin-bottom: 0;
+    }
+
+    .clip-item.editing .clip-actions,
+    .clip-item.editing .clip-meta {
+      display: none;
+    }
+
     .clip-edit-panel {
       display: none;
-      margin-top: 14px;
+      margin-top: 12px;
       padding-top: 14px;
       border-top: 1px solid var(--border);
     }
@@ -343,7 +354,7 @@
       display: flex;
       justify-content: flex-end;
       gap: 8px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
     .show-more-wrap {
@@ -472,7 +483,7 @@
         </div>
 
         <div class="form-group">
-          <label for="newPubDate">Udgivelsesdato</label>
+          <label for="newPubDate">Udgivelsestidspunkt</label>
           <input type="datetime-local" id="newPubDate" required>
         </div>
 
@@ -588,7 +599,7 @@
         return { ok: false, reason: 'Nøglen er ugyldig eller udløbet. Opret eller indsæt en gyldig nøgle.' };
       }
       if (!userRes.ok) {
-        return { ok: false, reason: `GitHub afviste forbindelsen (HTTP ${userRes.status}).` };
+        return { ok: false, reason: `Forbindelsen blev afvist (HTTP ${userRes.status}).` };
       }
 
       const repoRes = await fetch(
@@ -599,7 +610,7 @@
       if (repoRes.status === 404) {
         return {
           ok: false,
-          reason: `Repositoriet ${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo} blev ikke fundet (tjek at det er oprettet på GitHub).`
+          reason: `Repositoriet ${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo} blev ikke fundet.`
         };
       }
       if (!repoRes.ok) {
@@ -613,7 +624,7 @@
 
       return { ok: true };
     } catch (err) {
-      return { ok: false, reason: 'Netværksfejl ved kontakt til GitHub. Tjek internetforbindelsen.' };
+      return { ok: false, reason: 'Netværksfejl ved login. Tjek internetforbindelsen.' };
     }
   }
 
@@ -809,7 +820,7 @@
     return true;
   }
 
-  // --- GitHub API ---
+  // --- Hent og gem RSS-fil ---
   async function loadFeedFromGitHub() {
     const { owner, repo, branch, path } = GITHUB_CONFIG;
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}&t=${Date.now()}`;
@@ -821,7 +832,7 @@
     try {
       const res = await fetch(apiUrl, { cache: 'no-store', headers });
       if (res.status === 401) {
-        lockApp('Din GitHub-nøgle er udløbet eller ugyldig. Indtast en ny nøgle.');
+        lockApp('Din adgangsnøgle er udløbet eller ugyldig. Indtast en ny nøgle.');
         return;
       }
       if (res.status === 404) {
@@ -843,7 +854,7 @@
       renderList();
     } catch (err) {
       document.getElementById('clipsContainer').textContent = 'Kunne ikke hente RSS-filen.';
-      showStatus(`Kunne ikke hente RSS-filen fra GitHub (${err.message}).`, 'error');
+      showStatus(`Kunne ikke hente RSS-filen (${err.message}).`, 'error');
     }
   }
 
@@ -859,11 +870,11 @@
     };
 
     try {
-      showStatus('Gemmer i GitHub...', 'info');
+      showStatus('Gemmer i RSS-filen ...', 'info');
 
       const checkRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}&t=${Date.now()}`, { cache: 'no-store', headers });
       if (checkRes.status === 401) {
-        lockApp('Din GitHub-nøgle er udløbet. Log ind med en ny nøgle for at gemme.');
+        lockApp('Din adgangsnøgle er udløbet. Log ind med en ny nøgle for at gemme.');
         return false;
       }
       if (checkRes.ok) {
@@ -887,7 +898,7 @@
       });
 
       if (putRes.status === 401) {
-        lockApp('Din GitHub-nøgle er udløbet. Log ind med en ny nøgle.');
+        lockApp('Din adgangsnøgle er udløbet. Log ind med en ny nøgle.');
         return false;
       }
       if (putRes.status === 403) {
@@ -902,7 +913,7 @@
       const result = await putRes.json();
       currentSha = result.content.sha;
       renderList();
-      showStatus('RSS-filen er opdateret på GitHub.', 'success');
+      showStatus('RSS-filen er opdateret.', 'success');
       return true;
     } catch (err) {
       showStatus(`Fejl under gemning: ${err.message}`, 'error');
@@ -944,7 +955,7 @@
     container.innerHTML = visible.map(it => {
       const parsedDate = parsePubDate(it.pubDate);
       return `
-        <div class="clip-item" data-id="${it.id}">
+        <div class="clip-item" id="card_${it.id}" data-id="${it.id}">
           <div class="clip-top">
             <h3 class="clip-title">${escapeHtml(it.title)}</h3>
             <div class="clip-actions">
@@ -974,7 +985,7 @@
               <input type="url" id="elink_${it.id}" value="${escapeHtml(it.link)}">
             </div>
             <div class="form-group">
-              <label>Udgivelsesdato</label>
+              <label>Udgivelsestidspunkt</label>
               <input type="datetime-local" id="edate_${it.id}" value="${escapeHtml(parsedDate.dtLocal)}">
             </div>
             <div class="form-group">
@@ -986,7 +997,7 @@
               <input type="text" id="etags_${it.id}" value="${escapeHtml(it.tags)}">
             </div>
             <div class="edit-buttons">
-              <button type="button" class="btn btn-sm" onclick="toggleEdit('${it.id}')">Annuller</button>
+              <button type="button" class="btn btn-sm" id="cancelbtn_${it.id}" onclick="toggleEdit('${it.id}')">Annuller</button>
               <button type="button" class="btn btn-green btn-sm" id="savebtn_${it.id}" onclick="saveEditedClip('${it.id}')">Gem</button>
             </div>
           </div>
@@ -997,8 +1008,49 @@
 
   // --- Handlinger på eksisterende indhold ---
   window.toggleEdit = function(id) {
+    const card = document.getElementById('card_' + id);
     const panel = document.getElementById('edit_' + id);
-    if (panel) panel.classList.toggle('open');
+    if (!card || !panel) return;
+
+    const isOpening = !panel.classList.contains('open');
+
+    if (isOpening) {
+      const item = items.find(x => x.id === id);
+      if (item) {
+        const parsedDate = parsePubDate(item.pubDate);
+        document.getElementById('etitle_' + id).value = item.title;
+        document.getElementById('elink_' + id).value = item.link;
+        document.getElementById('edate_' + id).value = parsedDate.dtLocal;
+        document.getElementById('ethumb_' + id).value = item.thumb;
+        document.getElementById('etags_' + id).value = item.tags;
+      }
+
+      card.classList.add('editing');
+      panel.classList.add('open');
+
+      // Automatisk scroll, hvis det udfoldede indhold går ud over skærmens nederste kant
+      requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        const bottomMargin = 24;
+        const viewportHeight = window.innerHeight;
+
+        if (rect.bottom + bottomMargin > viewportHeight) {
+          const overflowBottom = (rect.bottom + bottomMargin) - viewportHeight;
+          if (rect.height + 36 <= viewportHeight) {
+            window.scrollBy({ top: overflowBottom, behavior: 'smooth' });
+          } else {
+            const panelRect = panel.getBoundingClientRect();
+            const panelOverflow = (panelRect.bottom + bottomMargin) - viewportHeight;
+            if (panelOverflow > 0) {
+              window.scrollBy({ top: panelOverflow, behavior: 'smooth' });
+            }
+          }
+        }
+      });
+    } else {
+      card.classList.remove('editing');
+      panel.classList.remove('open');
+    }
   };
 
   window.saveEditedClip = async function(id) {
@@ -1012,16 +1064,18 @@
     const tags = document.getElementById('etags_' + id).value.trim();
 
     if (!title || !link || !dtLocal || !thumb) {
-      alert('Udfyld venligst både titel, video-URL, dato og billede-URL.');
+      alert('Udfyld venligst både titel, video-URL, udgivelsestidspunkt og billede-URL.');
       return;
     }
     if (!validateUrlsBeforeSave(link, thumb)) return;
 
     const saveBtn = document.getElementById('savebtn_' + id);
+    const cancelBtn = document.getElementById('cancelbtn_' + id);
     if (saveBtn) {
       saveBtn.disabled = true;
       saveBtn.textContent = 'Gemmer...';
     }
+    if (cancelBtn) cancelBtn.disabled = true;
 
     const backup = { ...items[idx] };
     items[idx] = {
@@ -1040,6 +1094,7 @@
         saveBtn.disabled = false;
         saveBtn.textContent = 'Gem';
       }
+      if (cancelBtn) cancelBtn.disabled = false;
     }
   };
 
