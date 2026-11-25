@@ -66,13 +66,26 @@
     .login-card h1 {
       margin: 0 0 10px;
       font-size: 1.3rem;
-      line-height: 1.3;
+      line-height: 1.25;
     }
 
     .login-card p {
       margin: 0 0 20px;
       color: var(--muted);
       font-size: 0.92rem;
+    }
+
+    .login-subtitle {
+      margin: 0 0 20px;
+    }
+
+    .login-subtitle p {
+      margin: 0 0 10px;
+      line-height: 1.35;
+    }
+
+    .login-subtitle p:last-child {
+      margin-bottom: 0;
     }
 
     /* Præcis vertikal centrering under "Logger automatisk ind ..." */
@@ -522,10 +535,10 @@
     <div class="login-card" id="loginCard">
       <img src="logo.png" alt="SPORT LIVE" onerror="this.style.display='none'">
       <h1>Højdepunkter til Ekstra Bladet</h1>
-      <p id="loginSubtitle">
-        Indtast GitHub-nøgle for at logge ind.<br><br>
-        Browseren husker nøglen indtil 24-11-2027.
-      </p>
+      <div id="loginSubtitle" class="login-subtitle">
+        <p>Indtast GitHub-nøgle for at logge ind.</p>
+        <p>Browseren husker nøglen indtil 24-11-2027.</p>
+      </div>
       <p id="loginLoadingText" style="display:none;">Logger automatisk ind ...</p>
 
       <div class="login-error" id="loginError"></div>
