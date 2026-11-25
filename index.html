@@ -15,8 +15,6 @@
       --green-hover: #187332;
       --blue: #0b57d0;
       --danger: #c5221f;
-      --warn-bg: #fef7e0;
-      --warn-border: #f29900;
     }
 
     * { box-sizing: border-box; }
@@ -35,18 +33,85 @@
       margin: 0 auto;
     }
 
-    /* Header & Logo */
+    /* Login-vindue (vises før selve websiden) */
+    .login-wrapper {
+      min-height: 75vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+
+    .login-card img {
+      height: 84px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 16px;
+    }
+
+    .login-card h1 {
+      margin: 0 0 8px;
+      font-size: 1.3rem;
+    }
+
+    .login-card p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .login-card .form-group {
+      text-align: left;
+    }
+
+    .login-error {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 5px;
+      background: #fce8e6;
+      color: #a50e0e;
+      border: 1px solid #f5c2c0;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    /* Selve applikationen (skjult indtil login er godkendt) */
+    #appContent {
+      display: none;
+    }
+
+    .top-utility {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+
+    /* Header & Dobbelt størrelse logo */
     header {
       text-align: center;
       margin-bottom: 28px;
     }
 
     header img {
-      max-height: 68px;
-      max-width: 260px;
-      height: auto;
+      height: 136px;
+      width: auto;
+      max-width: min(520px, 100%);
+      object-fit: contain;
       display: block;
-      margin: 0 auto 12px;
+      margin: 0 auto 16px;
     }
 
     header h1 {
@@ -79,50 +144,9 @@
       font-size: 1.15rem;
     }
 
-    /* GitHub Connection Bar */
-    .gh-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-      padding: 10px 16px;
-      background: #eef2f6;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-bottom: 20px;
-    }
-
-    .gh-status-dot {
-      display: inline-block;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      margin-right: 6px;
-      background: #9aa0a6;
-    }
-
-    .gh-status-dot.ok { background: var(--green); }
-
-    .gh-settings {
-      display: none;
-      margin-bottom: 20px;
-    }
-
-    .gh-settings.open { display: block; }
-
-    /* Form Elements */
+    /* Formularfelter */
     .form-group {
       margin-bottom: 14px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    @media (max-width: 640px) {
-      .form-row { grid-template-columns: 1fr; }
     }
 
     label {
@@ -165,7 +189,7 @@
       box-shadow: 0 0 0 2px rgba(11, 87, 208, 0.15);
     }
 
-    /* Buttons & Links */
+    /* Knapper & Links */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -187,6 +211,8 @@
     .btn:hover { background: #f1f3f5; }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+    .btn-block { width: 100%; }
+
     .btn-green {
       background: var(--green);
       border-color: var(--green);
@@ -203,16 +229,28 @@
       border-color: #f1c1c0;
     }
 
-    .btn-danger:hover {
-      background: #fce8e6;
-    }
+    .btn-danger:hover { background: #fce8e6; }
 
     .btn-sm {
       padding: 6px 12px;
       font-size: 0.84rem;
     }
 
-    /* Status Messages */
+    .btn-subtle {
+      background: transparent;
+      border-color: transparent;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.82rem;
+      padding: 4px 8px;
+    }
+
+    .btn-subtle:hover {
+      background: #e8eaed;
+      color: var(--text);
+    }
+
+    /* Statusbeskeder */
     #statusBanner {
       display: none;
       padding: 12px 16px;
@@ -226,7 +264,7 @@
     #statusBanner.success { display: block; background: #e6f4ea; color: #137333; border: 1px solid #b7dfbf; }
     #statusBanner.error { display: block; background: #fce8e6; color: #a50e0e; border: 1px solid #f5c2c0; }
 
-    /* Clip List */
+    /* Klip-oversigt */
     .list-header {
       display: flex;
       flex-wrap: wrap;
@@ -366,107 +404,96 @@
 <body>
 
 <div class="container">
-  <header>
-    <img src="logo.png" alt="SPORT LIVE" onerror="this.style.display='none'">
-    <h1>Højdepunkter til Ekstra Bladet</h1>
 
-    <div class="feed-actions">
-      <button type="button" class="btn" id="btnShowPopup">Vis RSS-feed i popup</button>
-      <a href="rss.xml" target="_blank" rel="noopener" class="btn" id="linkOpenFeed">Åbn RSS-fil i ny fane ↗</a>
-      <button type="button" class="btn" id="btnCopyUrl">Kopiér URL til RSS-feed</button>
-    </div>
-  </header>
+  <!-- LOGIN-VINDUE (vises indtil gyldig GitHub-nøgle er bekræftet) -->
+  <div class="login-wrapper" id="loginScreen">
+    <div class="login-card">
+      <img src="logo.png" alt="SPORT LIVE" onerror="this.style.display='none'">
+      <h1>Højdepunkter til Ekstra Bladet</h1>
+      <p id="loginSubtitle">Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.</p>
 
-  <!-- GitHub forbindelseslinje -->
-  <div class="gh-bar">
-    <div>
-      <span class="gh-status-dot" id="ghDot"></span>
-      <span id="ghStatusText">Tjekker GitHub-forbindelse...</span>
-    </div>
-    <button type="button" class="btn btn-sm" id="btnToggleSettings">GitHub-opsætning</button>
-  </div>
+      <div class="login-error" id="loginError"></div>
 
-  <!-- GitHub indstillinger -->
-  <div class="card gh-settings" id="ghSettingsCard">
-    <h2>GitHub-forbindelse (gemmes kun lokalt i din browser)</h2>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="cfgOwner">GitHub-konto / ejer</label>
-        <input type="text" id="cfgOwner" value="sportlivedk">
-      </div>
-      <div class="form-group">
-        <label for="cfgRepo">Repository-navn</label>
-        <input type="text" id="cfgRepo" value="RSS">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="cfgBranch">Branch</label>
-        <input type="text" id="cfgBranch" value="main">
-      </div>
-      <div class="form-group">
-        <label for="cfgPath">RSS-filnavn</label>
-        <input type="text" id="cfgPath" value="rss.xml">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="cfgToken">GitHub Personal Access Token (kræves for at gemme)</label>
-      <input type="password" id="cfgToken" placeholder="github_pat_...">
-    </div>
-    <button type="button" class="btn btn-green" id="btnSaveConfig">Gem forbindelse og indlæs feed</button>
-  </div>
-
-  <div id="statusBanner"></div>
-
-  <!-- Opret nyt klip -->
-  <div class="card">
-    <h2>Tilføj nyt højdepunktsklip</h2>
-    <form id="addClipForm">
-      <div class="form-group">
-        <label for="newTitle">1) Titel</label>
-        <input type="text" id="newTitle" required placeholder="Fx Highlights: Conference League: Havnar Bóltfelag – Brøndby IF">
-      </div>
-
-      <div class="form-group">
-        <label for="newVideoUrl">2) URL til video</label>
-        <input type="url" id="newVideoUrl" required placeholder="Fx http://89.188.72.190/sportlive/Highlights_F3DKC917246001.mp4">
-      </div>
-
-      <div class="form-group">
-        <label for="newPubDate">
-          <span>3) Udgivelsesdato</span>
-          <button type="button" class="label-action" id="btnResetNow">Sæt til aktuel dato og tid</button>
-        </label>
-        <input type="datetime-local" id="newPubDate" required>
-      </div>
-
-      <div class="form-group">
-        <label for="newThumbUrl">4) URL til billede</label>
-        <input type="url" id="newThumbUrl" required placeholder="Fx http://89.188.72.190/sportlive/Thumb_F3DKC917246001.png">
-      </div>
-
-      <div class="form-group">
-        <label for="newTags">5) Tags (adskilles med komma)</label>
-        <input type="text" id="newTags" placeholder="Fx Conference League, Brøndby, Fodbold, sport">
-      </div>
-
-      <button type="submit" class="btn btn-green" id="btnSubmitNew">Gem</button>
-    </form>
-  </div>
-
-  <!-- Oversigt over eksisterende klip -->
-  <div class="card">
-    <div class="list-header">
-      <h2 id="listHeading">Klip i RSS-filen (0)</h2>
-      <input type="text" id="searchInput" class="search-box" placeholder="Søg i titel, link eller tags...">
-    </div>
-
-    <div id="clipsContainer">Indlæser klip...</div>
-
-    <div class="show-more-wrap" id="showMoreWrap" style="display:none;">
-      <button type="button" class="btn" id="btnShowAll">Vis alle klip</button>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginTokenInput">GitHub-adgangsnøgle</label>
+          <input type="password" id="loginTokenInput" required placeholder="github_pat_..." autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-green btn-block" id="btnLoginSubmit">Log ind</button>
+      </form>
     </div>
   </div>
+
+  <!-- SELVE WEBSIDEN -->
+  <div id="appContent">
+    <div class="top-utility">
+      <button type="button" class="btn btn-subtle" id="btnLogout" title="Fjern gemt nøgle fra denne browser">Log ud / skift nøgle</button>
+    </div>
+
+    <header>
+      <img src="logo.png" alt="SPORT LIVE" onerror="this.style.display='none'">
+      <h1>Højdepunkter til Ekstra Bladet</h1>
+
+      <div class="feed-actions">
+        <button type="button" class="btn" id="btnShowPopup">Vis RSS-feed i popup</button>
+        <a href="rss.xml" target="_blank" rel="noopener" class="btn" id="linkOpenFeed">Åbn RSS-fil i ny fane ↗</a>
+        <button type="button" class="btn" id="btnCopyUrl">Kopiér URL til RSS-feed</button>
+      </div>
+    </header>
+
+    <div id="statusBanner"></div>
+
+    <!-- Opret nyt klip -->
+    <div class="card">
+      <h2>Tilføj nyt højdepunktsklip</h2>
+      <form id="addClipForm">
+        <div class="form-group">
+          <label for="newTitle">1) Titel</label>
+          <input type="text" id="newTitle" required placeholder="Fx Highlights: Conference League: Havnar Bóltfelag – Brøndby IF">
+        </div>
+
+        <div class="form-group">
+          <label for="newVideoUrl">2) URL til video</label>
+          <input type="url" id="newVideoUrl" required placeholder="Fx http://89.188.72.190/sportlive/Highlights_F3DKC917246001.mp4">
+        </div>
+
+        <div class="form-group">
+          <label for="newPubDate">
+            <span>3) Udgivelsesdato</span>
+            <button type="button" class="label-action" id="btnResetNow">Sæt til aktuel dato og tid</button>
+          </label>
+          <input type="datetime-local" id="newPubDate" required>
+        </div>
+
+        <div class="form-group">
+          <label for="newThumbUrl">4) URL til billede</label>
+          <input type="url" id="newThumbUrl" required placeholder="Fx http://89.188.72.190/sportlive/Thumb_F3DKC917246001.png">
+        </div>
+
+        <div class="form-group">
+          <label for="newTags">5) Tags (adskilles med komma)</label>
+          <input type="text" id="newTags" placeholder="Fx Conference League, Brøndby, Fodbold, sport">
+        </div>
+
+        <button type="submit" class="btn btn-green" id="btnSubmitNew">Gem</button>
+      </form>
+    </div>
+
+    <!-- Oversigt over eksisterende klip -->
+    <div class="card">
+      <div class="list-header">
+        <h2 id="listHeading">Klip i RSS-filen (0)</h2>
+        <input type="text" id="searchInput" class="search-box" placeholder="Søg i titel, link eller tags...">
+      </div>
+
+      <div id="clipsContainer">Indlæser klip...</div>
+
+      <div class="show-more-wrap" id="showMoreWrap" style="display:none;">
+        <button type="button" class="btn" id="btnShowAll">Vis alle klip</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- Popup-vindue til visning af rå RSS-kode -->
@@ -484,56 +511,144 @@
 </div>
 
 <script>
+  // Fast konfiguration til jeres GitHub-repository
+  const GITHUB_CONFIG = {
+    owner: 'sportlivedk',
+    repo: 'RSS',
+    branch: 'main',
+    path: 'rss.xml'
+  };
+
+  const TOKEN_STORAGE_KEY = 'sl_rss_token';
   const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const DEFAULT_LIMIT = 25;
 
+  let activeToken = '';
   let items = [];
   let currentSha = null;
   let showAllItems = false;
 
-  // --- Konfigurations-hjælpere ---
-  function getConfig() {
-    return {
-      owner: (localStorage.getItem('sl_rss_owner') || 'sportlivedk').trim(),
-      repo: (localStorage.getItem('sl_rss_repo') || 'RSS').trim(),
-      branch: (localStorage.getItem('sl_rss_branch') || 'main').trim(),
-      path: (localStorage.getItem('sl_rss_path') || 'rss.xml').trim(),
-      token: (localStorage.getItem('sl_rss_token') || '').trim()
-    };
-  }
-
   function getPublicFeedUrl() {
-    const cfg = getConfig();
-    return `https://${cfg.owner}.github.io/${cfg.repo}/${cfg.path}`;
-  }
-
-  function updateHeaderLinks() {
-    const feedUrl = getPublicFeedUrl();
-    const cfg = getConfig();
-    document.getElementById('linkOpenFeed').href = feedUrl;
-    document.getElementById('modalFileLabel').textContent = cfg.path;
-
-    const dot = document.getElementById('ghDot');
-    const txt = document.getElementById('ghStatusText');
-    if (cfg.token) {
-      dot.className = 'gh-status-dot ok';
-      txt.textContent = `Klar til at gemme i ${cfg.owner}/${cfg.repo} (${cfg.path})`;
-    } else {
-      dot.className = 'gh-status-dot';
-      txt.textContent = `Læsetilstand (${cfg.owner}/${cfg.repo}) – tilføj GitHub-token for at kunne gemme`;
-    }
+    return `https://${GITHUB_CONFIG.owner}.github.io/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.path}`;
   }
 
   function showStatus(msg, type = 'info') {
     const el = document.getElementById('statusBanner');
     el.textContent = msg;
     el.className = type;
+    el.style.display = 'block';
     if (type === 'success') {
       setTimeout(() => {
         if (el.textContent === msg) el.style.display = 'none';
       }, 5000);
     }
+  }
+
+  function showLoginError(msg) {
+    const errEl = document.getElementById('loginError');
+    if (!msg) {
+      errEl.style.display = 'none';
+      errEl.textContent = '';
+    } else {
+      errEl.textContent = msg;
+      errEl.style.display = 'block';
+    }
+  }
+
+  // --- Validering af GitHub-nøgle ved login ---
+  async function verifyGitHubToken(token) {
+    const clean = (token || '').trim();
+    if (!clean) return { ok: false, reason: 'Indtast venligst en nøgle.' };
+
+    const headers = {
+      'Accept': 'application/vnd.github+json',
+      'Authorization': `Bearer ${clean}`
+    };
+
+    try {
+      const userRes = await fetch(`https://api.github.com/user?t=${Date.now()}`, {
+        cache: 'no-store',
+        headers
+      });
+
+      if (userRes.status === 401) {
+        return { ok: false, reason: 'Nøglen er ugyldig eller udløbet. Opret eller indsæt en gyldig nøgle.' };
+      }
+      if (!userRes.ok) {
+        return { ok: false, reason: `GitHub afviste forbindelsen (HTTP ${userRes.status}).` };
+      }
+
+      const repoRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}?t=${Date.now()}`,
+        { cache: 'no-store', headers }
+      );
+
+      if (repoRes.status === 404) {
+        return {
+          ok: false,
+          reason: `Repositoriet ${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo} blev ikke fundet (tjek at det er oprettet på GitHub).`
+        };
+      }
+      if (!repoRes.ok) {
+        return { ok: false, reason: `Kunne ikke tilgå repositoriet (HTTP ${repoRes.status}).` };
+      }
+
+      const repoData = await repoRes.json();
+      if (repoData.permissions && repoData.permissions.push === false) {
+        return { ok: false, reason: 'Kontoen bag nøglen har ikke skriveadgang til repositoriet.' };
+      }
+
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, reason: 'Netværksfejl ved kontakt til GitHub. Tjek internetforbindelsen.' };
+    }
+  }
+
+  async function unlockAppWithToken(token, isAutoLogin = false) {
+    const btn = document.getElementById('btnLoginSubmit');
+    const form = document.getElementById('loginForm');
+    const subtitle = document.getElementById('loginSubtitle');
+
+    showLoginError('');
+    btn.disabled = true;
+    btn.textContent = 'Kontrollerer nøgle...';
+    if (isAutoLogin) {
+      form.style.display = 'none';
+      subtitle.textContent = 'Logger automatisk ind...';
+    }
+
+    const check = await verifyGitHubToken(token);
+
+    btn.disabled = false;
+    btn.textContent = 'Log ind';
+    form.style.display = 'block';
+    subtitle.textContent = 'Indtast jeres GitHub-nøgle for at åbne administrationen. Browseren husker nøglen fremover.';
+
+    if (!check.ok) {
+      localStorage.removeItem(TOKEN_STORAGE_KEY);
+      activeToken = '';
+      document.getElementById('appContent').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      showLoginError(check.reason);
+      return;
+    }
+
+    activeToken = token.trim();
+    localStorage.setItem(TOKEN_STORAGE_KEY, activeToken);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    document.getElementById('newPubDate').value = getNowLocalInput();
+    await loadFeedFromGitHub();
+  }
+
+  function lockApp(reasonMsg = '') {
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    activeToken = '';
+    document.getElementById('loginTokenInput').value = '';
+    document.getElementById('appContent').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    showLoginError(reasonMsg);
   }
 
   // --- Dato- og tidsformatering ---
@@ -681,19 +796,24 @@
 
   // --- GitHub API ---
   async function loadFeedFromGitHub() {
-    const cfg = getConfig();
-    updateHeaderLinks();
-    const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}`;
-    const headers = { 'Accept': 'application/vnd.github+json' };
-    if (cfg.token) headers['Authorization'] = `Bearer ${cfg.token}`;
+    const { owner, repo, branch, path } = GITHUB_CONFIG;
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}&t=${Date.now()}`;
+    const headers = {
+      'Accept': 'application/vnd.github+json',
+      'Authorization': `Bearer ${activeToken}`
+    };
 
     try {
       const res = await fetch(apiUrl, { cache: 'no-store', headers });
+      if (res.status === 401) {
+        lockApp('Din GitHub-nøgle er udløbet. Indtast en ny nøgle.');
+        return;
+      }
       if (res.status === 404) {
         items = [];
         currentSha = null;
         renderList();
-        showStatus(`Ingen ${cfg.path} fundet i ${cfg.owner}/${cfg.repo} endnu. Filen oprettes automatisk, når du gemmer dit første klip.`, 'info');
+        showStatus(`Ingen ${path} fundet endnu. Filen oprettes automatisk, når du gemmer dit første klip.`, 'info');
         return;
       }
       if (!res.ok) {
@@ -707,33 +827,30 @@
       sortItemsDesc();
       renderList();
     } catch (err) {
-      document.getElementById('clipsContainer').textContent = 'Kunne ikke hente RSS-filen endnu.';
-      showStatus(`Kunne ikke hente fra GitHub (${err.message}). Tjek at repositoriet ${cfg.owner}/${cfg.repo} er oprettet.`, 'error');
+      document.getElementById('clipsContainer').textContent = 'Kunne ikke hente RSS-filen.';
+      showStatus(`Kunne ikke hente RSS-filen fra GitHub (${err.message}).`, 'error');
     }
   }
 
   async function saveFeedToGitHub(commitMessage) {
-    const cfg = getConfig();
-    if (!cfg.token) {
-      document.getElementById('ghSettingsCard').classList.add('open');
-      showStatus('Indsæt dit GitHub Personal Access Token under GitHub-opsætning før du kan gemme.', 'error');
-      return false;
-    }
-
+    const { owner, repo, branch, path } = GITHUB_CONFIG;
     sortItemsDesc();
     const xmlString = buildXmlString();
-    const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
     const headers = {
       'Accept': 'application/vnd.github+json',
-      'Authorization': `Bearer ${cfg.token}`,
+      'Authorization': `Bearer ${activeToken}`,
       'Content-Type': 'application/json'
     };
 
     try {
       showStatus('Gemmer i GitHub...', 'info');
 
-      // Hent altid frisk SHA lige inden vi skriver, så vi undgår versionskonflikter
-      const checkRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}`, { cache: 'no-store', headers });
+      const checkRes = await fetch(`${apiUrl}?ref=${encodeURIComponent(branch)}&t=${Date.now()}`, { cache: 'no-store', headers });
+      if (checkRes.status === 401) {
+        lockApp('Din GitHub-nøgle er udløbet. Log ind med en ny nøgle for at gemme.');
+        return false;
+      }
       if (checkRes.ok) {
         const checkData = await checkRes.json();
         currentSha = checkData.sha;
@@ -744,7 +861,7 @@
       const body = {
         message: commitMessage,
         content: utf8ToBase64(xmlString),
-        branch: cfg.branch
+        branch
       };
       if (currentSha) body.sha = currentSha;
 
@@ -754,6 +871,13 @@
         body: JSON.stringify(body)
       });
 
+      if (putRes.status === 401) {
+        lockApp('Din GitHub-nøgle er udløbet. Log ind med en ny nøgle.');
+        return false;
+      }
+      if (putRes.status === 403) {
+        throw new Error('Nøglen mangler skriverettighed ("Contents: Read and write") til RSS-repositoriet.');
+      }
       if (!putRes.ok) {
         const errData = await putRes.json().catch(() => ({}));
         throw new Error(errData.message || `HTTP ${putRes.status}`);
@@ -765,7 +889,7 @@
       showStatus('RSS-filen er opdateret på GitHub.', 'success');
       return true;
     } catch (err) {
-      showStatus(`Fejl under gemning til GitHub: ${err.message}`, 'error');
+      showStatus(`Fejl under gemning: ${err.message}`, 'error');
       return false;
     }
   }
@@ -902,38 +1026,31 @@
     if (!ok) items = prevItems;
   };
 
-  // --- Event Listeners ---
+  // --- Opstart og Event Listeners ---
   document.addEventListener('DOMContentLoaded', () => {
-    const cfg = getConfig();
-    document.getElementById('cfgOwner').value = cfg.owner;
-    document.getElementById('cfgRepo').value = cfg.repo;
-    document.getElementById('cfgBranch').value = cfg.branch;
-    document.getElementById('cfgPath').value = cfg.path;
-    document.getElementById('cfgToken').value = cfg.token;
+    document.getElementById('linkOpenFeed').href = getPublicFeedUrl();
+    document.getElementById('modalFileLabel').textContent = GITHUB_CONFIG.path;
 
-    if (!cfg.token) {
-      document.getElementById('ghSettingsCard').classList.add('open');
+    // Tjek om der allerede ligger en gyldig nøgle i browseren
+    const savedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (savedToken) {
+      unlockAppWithToken(savedToken, true);
     }
 
-    document.getElementById('newPubDate').value = getNowLocalInput();
-    loadFeedFromGitHub();
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inputToken = document.getElementById('loginTokenInput').value;
+      unlockAppWithToken(inputToken, false);
+    });
+
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      if (confirm('Vil du fjerne den gemte GitHub-nøgle fra denne browser?')) {
+        lockApp();
+      }
+    });
 
     document.getElementById('btnResetNow').addEventListener('click', () => {
       document.getElementById('newPubDate').value = getNowLocalInput();
-    });
-
-    document.getElementById('btnToggleSettings').addEventListener('click', () => {
-      document.getElementById('ghSettingsCard').classList.toggle('open');
-    });
-
-    document.getElementById('btnSaveConfig').addEventListener('click', () => {
-      localStorage.setItem('sl_rss_owner', document.getElementById('cfgOwner').value.trim());
-      localStorage.setItem('sl_rss_repo', document.getElementById('cfgRepo').value.trim());
-      localStorage.setItem('sl_rss_branch', document.getElementById('cfgBranch').value.trim());
-      localStorage.setItem('sl_rss_path', document.getElementById('cfgPath').value.trim());
-      localStorage.setItem('sl_rss_token', document.getElementById('cfgToken').value.trim());
-      document.getElementById('ghSettingsCard').classList.remove('open');
-      loadFeedFromGitHub();
     });
 
     document.getElementById('addClipForm').addEventListener('submit', async (e) => {
@@ -977,7 +1094,6 @@
       renderList();
     });
 
-    // Top-knapper: Popup, Kopiér URL
     document.getElementById('btnShowPopup').addEventListener('click', () => {
       document.getElementById('xmlModalContent').textContent = buildXmlString();
       document.getElementById('xmlModal').classList.add('open');
