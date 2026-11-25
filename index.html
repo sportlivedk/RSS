@@ -324,6 +324,7 @@
       padding: 16px 20px;
       margin-bottom: 18px;
       background: #fafbfc;
+      transition: background-color 0.15s, border-color 0.15s;
     }
 
     .clip-item:last-child {
@@ -446,7 +447,12 @@
       }
     }
 
-    /* Når der redigeres: Skjul Rediger/Slet samt faste datafelter og thumbnail */
+    /* Når der redigeres: Lidt mørkere baggrund samt skjul af faste felter */
+    .clip-item.editing {
+      background: #eff2f6;
+      border-color: #c8d0dc;
+    }
+
     .clip-item.editing .clip-top {
       margin-bottom: 0;
     }
@@ -460,7 +466,7 @@
       display: none;
       margin-top: 12px;
       padding-top: 14px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid #cfd6e2;
     }
 
     .clip-edit-panel.open { display: block; }
@@ -537,7 +543,7 @@
       <h1>Højdepunkter til Ekstra Bladet</h1>
       <div id="loginSubtitle" class="login-subtitle">
         <p>Indtast GitHub-nøgle for at logge ind.</p>
-        <p>Browseren husker nøglen indtil 24/11 2027.</p>
+        <p>Browseren husker nøglen indtil 24-11-2027.</p>
       </div>
       <p id="loginLoadingText" style="display:none;">Logger automatisk ind ...</p>
 
