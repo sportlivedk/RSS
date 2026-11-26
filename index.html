@@ -190,6 +190,41 @@
       margin-bottom: 5px;
     }
 
+    /* Diskret grønt flueben ved udfyldte felter */
+    .label-with-check {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .field-check {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #e6f4ea;
+      border: 1px solid #b7dfc8;
+      color: #237044;
+      opacity: 0;
+      transform: scale(0.75);
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+
+    .field-check.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .field-check svg {
+      width: 10px;
+      height: 10px;
+      display: block;
+    }
+
     input[type="text"],
     input[type="url"],
     input[type="password"],
@@ -613,27 +648,52 @@
         </div>
 
         <div class="form-group">
-          <label for="newTitle">Titel</label>
+          <label for="newTitle" class="label-with-check">
+            <span>Titel</span>
+            <span class="field-check" id="checkTitle" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3.2 8.4 6.6 11.8 12.8 4.6"></polyline></svg>
+            </span>
+          </label>
           <input type="text" id="newTitle" required placeholder="F.eks. Basketball: Bakken Bears - Svendborg Rabbits">
         </div>
 
         <div class="form-group">
-          <label for="newVideoUrl">URL til video</label>
+          <label for="newVideoUrl" class="label-with-check">
+            <span>URL til video</span>
+            <span class="field-check" id="checkVideoUrl" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3.2 8.4 6.6 11.8 12.8 4.6"></polyline></svg>
+            </span>
+          </label>
           <input type="url" id="newVideoUrl" required value="http://83.151.146.221/HL_VIDEO_EB/" placeholder="F.eks. http://83.151.146.221/HL_VIDEO_EB/Highlights_F3DKC917246001.mp4">
         </div>
 
         <div class="form-group">
-          <label for="newThumbUrl">URL til billede</label>
+          <label for="newThumbUrl" class="label-with-check">
+            <span>URL til billede</span>
+            <span class="field-check" id="checkThumbUrl" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3.2 8.4 6.6 11.8 12.8 4.6"></polyline></svg>
+            </span>
+          </label>
           <input type="url" id="newThumbUrl" required value="http://83.151.146.221/HL_THUMBNAIL_EB/" placeholder="F.eks. http://83.151.146.221/HL_THUMBNAIL_EB/Thumb_F3DKC917246001.png">
         </div>
 
         <div class="form-group">
-          <label for="newPubDate">Udgivelsestidspunkt</label>
+          <label for="newPubDate" class="label-with-check">
+            <span>Udgivelsestidspunkt</span>
+            <span class="field-check" id="checkPubDate" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3.2 8.4 6.6 11.8 12.8 4.6"></polyline></svg>
+            </span>
+          </label>
           <input type="datetime-local" id="newPubDate" required>
         </div>
 
         <div class="form-group">
-          <label for="newTags">Tags (adskilles med komma)</label>
+          <label for="newTags" class="label-with-check">
+            <span>Tags (adskilles med komma)</span>
+            <span class="field-check" id="checkTags" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3.2 8.4 6.6 11.8 12.8 4.6"></polyline></svg>
+            </span>
+          </label>
           <input type="text" id="newTags" placeholder="F.eks. basketball, basketligaen, sport">
         </div>
 
@@ -715,16 +775,47 @@
   let currentSha = null;
   let showAllItems = false;
   let statusTimer = null;
+  let pubDateConfirmed = false;
 
   function getPublicFeedUrl() {
     return `https://${GITHUB_CONFIG.owner}.github.io/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.path}`;
   }
 
+  function isValidMediaFileUrl(rawVal, defaultPrefix, extPattern) {
+    const val = normalizePrefilledUrl(rawVal, defaultPrefix);
+    if (!val || val === defaultPrefix || /\/$/.test(val) || /\s/.test(val)) {
+      return false;
+    }
+    const regex = new RegExp(`^https?:\\/\\/[^/\\s]+\\/(?:.+\\/)?[^/\\s.][^/\\s]*\\.(${extPattern})$`, 'i');
+    return regex.test(val);
+  }
+
+  function setCheckVisible(id, isValid) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('visible', Boolean(isValid));
+  }
+
+  function updateFormCheckmarks() {
+    const titleOk = document.getElementById('newTitle').value.trim().length > 0;
+    const videoOk = isValidMediaFileUrl(document.getElementById('newVideoUrl').value, DEFAULT_VIDEO_PREFIX, 'mp4|mov');
+    const thumbOk = isValidMediaFileUrl(document.getElementById('newThumbUrl').value, DEFAULT_THUMB_PREFIX, 'png|jpg|jpeg');
+    const dateOk = pubDateConfirmed && Boolean(document.getElementById('newPubDate').value);
+    const tagsOk = document.getElementById('newTags').value.replace(/,/g, '').trim().length > 0;
+
+    setCheckVisible('checkTitle', titleOk);
+    setCheckVisible('checkVideoUrl', videoOk);
+    setCheckVisible('checkThumbUrl', thumbOk);
+    setCheckVisible('checkPubDate', dateOk);
+    setCheckVisible('checkTags', tagsOk);
+  }
+
   function resetAddClipDefaults() {
+    pubDateConfirmed = false;
     document.getElementById('productionSelect').value = '';
     document.getElementById('newVideoUrl').value = DEFAULT_VIDEO_PREFIX;
     document.getElementById('newThumbUrl').value = DEFAULT_THUMB_PREFIX;
     document.getElementById('newPubDate').value = getNowLocalInput();
+    updateFormCheckmarks();
   }
 
   // --- Beregn udgivelsestidspunkt ud fra produktionsdato + starttid + holdback-timer ---
@@ -1000,7 +1091,10 @@
       if (cleaned !== inputEl.value) {
         inputEl.value = cleaned;
       }
+      updateFormCheckmarks();
     });
+
+    inputEl.addEventListener('change', updateFormCheckmarks);
   }
 
   function showStatus(msg, type = 'info') {
@@ -1686,6 +1780,8 @@
         newTitleInput.value = '';
         newTagsInput.value = '';
         newPubDateInput.value = getNowLocalInput();
+        pubDateConfirmed = false;
+        updateFormCheckmarks();
         return;
       }
 
@@ -1695,13 +1791,27 @@
       newTitleInput.value = prodItem.fullTitle;
       newPubDateInput.value = computeHoldbackDateLocal(prodItem.dateIso, prodItem.time, HOLDBACK_HOURS);
       newTagsInput.value = generateSmartTags(prodItem);
+      pubDateConfirmed = true;
+      updateFormCheckmarks();
     });
 
     newTitleInput.addEventListener('input', () => {
       if (newTitleInput.value.trim() === '' && productionSelect.value !== '') {
         productionSelect.value = '';
       }
+      updateFormCheckmarks();
     });
+    newTitleInput.addEventListener('change', updateFormCheckmarks);
+
+    ['input', 'change', 'blur'].forEach(evt => {
+      newPubDateInput.addEventListener(evt, () => {
+        if (newPubDateInput.value) pubDateConfirmed = true;
+        updateFormCheckmarks();
+      });
+    });
+
+    newTagsInput.addEventListener('input', updateFormCheckmarks);
+    newTagsInput.addEventListener('change', updateFormCheckmarks);
 
     document.getElementById('statusBanner').addEventListener('click', (e) => {
       e.currentTarget.style.display = 'none';
