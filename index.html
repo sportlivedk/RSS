@@ -193,7 +193,8 @@
     input[type="text"],
     input[type="url"],
     input[type="password"],
-    input[type="datetime-local"] {
+    input[type="datetime-local"],
+    select {
       width: 100%;
       padding: 9px 11px;
       font-size: 0.95rem;
@@ -204,10 +205,17 @@
       color: var(--text);
     }
 
-    input:focus {
+    input:focus,
+    select:focus {
       outline: none;
       border-color: var(--blue);
       box-shadow: 0 0 0 2px rgba(43, 108, 176, 0.18);
+    }
+
+    select:disabled {
+      background: #f4f5f7;
+      color: var(--muted);
+      cursor: not-allowed;
     }
 
     /* Knapper & Ikoner */
@@ -598,6 +606,13 @@
       <h2>Tilføj ny video</h2>
       <form id="addClipForm">
         <div class="form-group">
+          <label for="productionSelect">Hent fra produktionsdatabasen (valgfrit)</label>
+          <select id="productionSelect">
+            <option value="">Henter seneste produktioner ...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label for="newTitle">Titel</label>
           <input type="text" id="newTitle" required placeholder="F.eks. Basketball: Bakken Bears - Svendborg Rabbits">
         </div>
@@ -667,6 +682,9 @@
     path: 'rss.xml'
   };
 
+  // Indsæt jeres Google Apps Script Webapp-URL herunder (https://script.google.com/macros/s/.../exec)
+  const PRODUCTION_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzbAkvvtjux13RMg6YB2GUN0wZsCVVrnHaBeydCuKU-c-swcWTYIOrrLpAZAo4y2rUR/exec';
+
   // Standard-URL'er til nye videoer og billeder (kan frit redigeres i felterne)
   const DEFAULT_VIDEO_PREFIX = 'http://83.151.146.221/HL_VIDEO_EB/';
   const DEFAULT_THUMB_PREFIX = 'http://83.151.146.221/HL_THUMBNAIL_EB/';
@@ -687,9 +705,55 @@
   }
 
   function resetAddClipDefaults() {
+    document.getElementById('productionSelect').value = '';
     document.getElementById('newVideoUrl').value = DEFAULT_VIDEO_PREFIX;
     document.getElementById('newThumbUrl').value = DEFAULT_THUMB_PREFIX;
     document.getElementById('newPubDate').value = getNowLocalInput();
+  }
+
+  // --- Hent seneste produktioner fra Google Sheet via Apps Script ---
+  async function loadProductionsDropdown() {
+    const selectEl = document.getElementById('productionSelect');
+    const url = (PRODUCTION_WEBAPP_URL || '').trim();
+
+    if (!url || url.includes('INDSÆT_')) {
+      selectEl.innerHTML = '<option value="">— Indsæt Webapp-URL i index.html for at hente produktioner —</option>';
+      selectEl.disabled = true;
+      return;
+    }
+
+    selectEl.disabled = true;
+    selectEl.innerHTML = '<option value="">Henter seneste produktioner ...</option>';
+
+    try {
+      const sep = url.includes('?') ? '&' : '?';
+      const res = await fetch(`${url}${sep}t=${Date.now()}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      if (!data.ok || !Array.isArray(data.items)) {
+        throw new Error(data.error || 'Ugyldigt svar fra produktionsdatabasen.');
+      }
+
+      if (data.items.length === 0) {
+        selectEl.innerHTML = '<option value="">— Ingen produktioner fundet de seneste 7 dage —</option>';
+        return;
+      }
+
+      const optionsHtml = [
+        '<option value="">— Vælg udsendelse fra de seneste 7 dage —</option>',
+        ...data.items.map(it => {
+          const label = `${it.dateDisplay} – ${it.fullTitle}`;
+          return `<option value="${escapeHtml(it.fullTitle)}">${escapeHtml(label)}</option>`;
+        })
+      ].join('');
+
+      selectEl.innerHTML = optionsHtml;
+      selectEl.disabled = false;
+    } catch (err) {
+      selectEl.innerHTML = '<option value="">— Kunne ikke hente produktionslisten (skriv titel nedenfor) —</option>';
+      selectEl.disabled = true;
+    }
   }
 
   function normalizePrefilledUrl(val, defaultPrefix) {
@@ -853,6 +917,7 @@
     loadingText.style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
     resetAddClipDefaults();
+    loadProductionsDropdown();
     await loadFeedFromGitHub();
   }
 
@@ -1401,6 +1466,21 @@
 
     setupPrefilledUrlField(document.getElementById('newVideoUrl'), DEFAULT_VIDEO_PREFIX);
     setupPrefilledUrlField(document.getElementById('newThumbUrl'), DEFAULT_THUMB_PREFIX);
+
+    const productionSelect = document.getElementById('productionSelect');
+    const newTitleInput = document.getElementById('newTitle');
+
+    productionSelect.addEventListener('change', () => {
+      if (productionSelect.value) {
+        newTitleInput.value = productionSelect.value;
+      }
+    });
+
+    newTitleInput.addEventListener('input', () => {
+      if (productionSelect.value && newTitleInput.value !== productionSelect.value) {
+        productionSelect.value = '';
+      }
+    });
 
     document.getElementById('statusBanner').addEventListener('click', (e) => {
       e.currentTarget.style.display = 'none';
