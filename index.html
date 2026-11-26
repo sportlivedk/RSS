@@ -608,13 +608,13 @@
         </div>
 
         <div class="form-group">
-          <label for="newPubDate">Udgivelsestidspunkt</label>
-          <input type="datetime-local" id="newPubDate" required>
+          <label for="newThumbUrl">URL til billede</label>
+          <input type="url" id="newThumbUrl" required value="http://83.151.146.221/HL_THUMBNAIL_EB/" placeholder="F.eks. http://83.151.146.221/HL_THUMBNAIL_EB/Thumb_F3DKC917246001.png">
         </div>
 
         <div class="form-group">
-          <label for="newThumbUrl">URL til billede</label>
-          <input type="url" id="newThumbUrl" required value="http://83.151.146.221/HL_THUMBNAIL_EB/" placeholder="F.eks. http://83.151.146.221/HL_THUMBNAIL_EB/Thumb_F3DKC917246001.png">
+          <label for="newPubDate">Udgivelsestidspunkt</label>
+          <input type="datetime-local" id="newPubDate" required>
         </div>
 
         <div class="form-group">
@@ -1258,12 +1258,12 @@
               <input type="url" id="elink_${it.id}" value="${escapeHtml(it.link)}">
             </div>
             <div class="form-group">
-              <label>Udgivelsestidspunkt</label>
-              <input type="datetime-local" id="edate_${it.id}" value="${escapeHtml(parsedDate.dtLocal)}">
-            </div>
-            <div class="form-group">
               <label>URL til billede</label>
               <input type="url" id="ethumb_${it.id}" value="${escapeHtml(it.thumb)}">
+            </div>
+            <div class="form-group">
+              <label>Udgivelsestidspunkt</label>
+              <input type="datetime-local" id="edate_${it.id}" value="${escapeHtml(parsedDate.dtLocal)}">
             </div>
             <div class="form-group">
               <label>Tags (adskilles med komma)</label>
@@ -1293,8 +1293,8 @@
         const parsedDate = parsePubDate(item.pubDate);
         document.getElementById('etitle_' + id).value = item.title;
         document.getElementById('elink_' + id).value = item.link;
-        document.getElementById('edate_' + id).value = parsedDate.dtLocal;
         document.getElementById('ethumb_' + id).value = item.thumb;
+        document.getElementById('edate_' + id).value = parsedDate.dtLocal;
         document.getElementById('etags_' + id).value = item.tags;
       }
 
@@ -1332,12 +1332,12 @@
 
     const title = document.getElementById('etitle_' + id).value.trim();
     const link = document.getElementById('elink_' + id).value.trim();
-    const dtLocal = document.getElementById('edate_' + id).value;
     const thumb = document.getElementById('ethumb_' + id).value.trim();
+    const dtLocal = document.getElementById('edate_' + id).value;
     const tags = document.getElementById('etags_' + id).value.trim();
 
-    if (!title || !link || !dtLocal || !thumb) {
-      alert('Udfyld venligst både titel, video-URL, udgivelsestidspunkt og billede-URL.');
+    if (!title || !link || !thumb || !dtLocal) {
+      alert('Udfyld venligst både titel, video-URL, billede-URL og udgivelsestidspunkt.');
       return;
     }
     if (!validateUrlsBeforeSave(link, thumb)) return;
@@ -1421,8 +1421,8 @@
       e.preventDefault();
       const title = document.getElementById('newTitle').value.trim();
       const link = normalizePrefilledUrl(document.getElementById('newVideoUrl').value, DEFAULT_VIDEO_PREFIX);
-      const dtLocal = document.getElementById('newPubDate').value;
       const thumb = normalizePrefilledUrl(document.getElementById('newThumbUrl').value, DEFAULT_THUMB_PREFIX);
+      const dtLocal = document.getElementById('newPubDate').value;
       const tags = document.getElementById('newTags').value.trim();
 
       if (!validateUrlsBeforeSave(link, thumb)) return;
