@@ -1036,7 +1036,7 @@
       }
 
       const optionsHtml = [
-        '<option value="">— Vælg udsendelse fra de seneste 7 dage —</option>',
+        '<option value="">Vælg udsendelse fra de seneste 7 dage</option>',
         ...productionItems.map((it, idx) => {
           const label = `${it.dateDisplay} – ${it.fullTitle}`;
           return `<option value="${idx}">${escapeHtml(label)}</option>`;
