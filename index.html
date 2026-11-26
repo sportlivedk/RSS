@@ -604,7 +604,7 @@
 
         <div class="form-group">
           <label for="newVideoUrl">URL til video</label>
-          <input type="url" id="newVideoUrl" required placeholder="F.eks. http://89.188.72.190/sportlive/Highlights_F3DKC917246001.mp4">
+          <input type="url" id="newVideoUrl" required value="http://83.151.146.221/HL_VIDEO_EB/" placeholder="F.eks. http://83.151.146.221/HL_VIDEO_EB/Highlights_F3DKC917246001.mp4">
         </div>
 
         <div class="form-group">
@@ -614,7 +614,7 @@
 
         <div class="form-group">
           <label for="newThumbUrl">URL til billede</label>
-          <input type="url" id="newThumbUrl" required placeholder="F.eks. http://89.188.72.190/sportlive/Thumb_F3DKC917246001.png">
+          <input type="url" id="newThumbUrl" required value="http://83.151.146.221/HL_THUMBNAIL_EB/" placeholder="F.eks. http://83.151.146.221/HL_THUMBNAIL_EB/Thumb_F3DKC917246001.png">
         </div>
 
         <div class="form-group">
@@ -667,6 +667,10 @@
     path: 'rss.xml'
   };
 
+  // Standard-URL'er til nye videoer og billeder (kan frit redigeres i felterne)
+  const DEFAULT_VIDEO_PREFIX = 'http://83.151.146.221/HL_VIDEO_EB/';
+  const DEFAULT_THUMB_PREFIX = 'http://83.151.146.221/HL_THUMBNAIL_EB/';
+
   const TOKEN_STORAGE_KEY = 'sl_rss_token';
   const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -680,6 +684,52 @@
 
   function getPublicFeedUrl() {
     return `https://${GITHUB_CONFIG.owner}.github.io/${GITHUB_CONFIG.repo}/${GITHUB_CONFIG.path}`;
+  }
+
+  function resetAddClipDefaults() {
+    document.getElementById('newVideoUrl').value = DEFAULT_VIDEO_PREFIX;
+    document.getElementById('newThumbUrl').value = DEFAULT_THUMB_PREFIX;
+    document.getElementById('newPubDate').value = getNowLocalInput();
+  }
+
+  function normalizePrefilledUrl(val, defaultPrefix) {
+    const trimmed = (val || '').trim();
+    if (trimmed.startsWith(defaultPrefix)) {
+      const rest = trimmed.slice(defaultPrefix.length).trim();
+      if (/^https?:\/\//i.test(rest)) {
+        return rest;
+      }
+      if (rest.startsWith('/')) {
+        return defaultPrefix + rest.replace(/^\/+/, '');
+      }
+    }
+    return trimmed;
+  }
+
+  function setupPrefilledUrlField(inputEl, defaultPrefix) {
+    let isMouseDown = false;
+    inputEl.addEventListener('mousedown', () => { isMouseDown = true; });
+    inputEl.addEventListener('mouseup', () => { isMouseDown = false; });
+
+    // Ved Tab ind i feltet placeres markøren efter skråstregen i stedet for at markere og overskrive stien
+    inputEl.addEventListener('focus', () => {
+      if (!isMouseDown && inputEl.value === defaultPrefix) {
+        setTimeout(() => {
+          try {
+            const len = inputEl.value.length;
+            inputEl.setSelectionRange(len, len);
+          } catch (e) {}
+        }, 0);
+      }
+    });
+
+    // Ryd automatisk op, hvis nogen indsætter en fuld URL eller en ekstra "/" efter standard-stien
+    inputEl.addEventListener('input', () => {
+      const cleaned = normalizePrefilledUrl(inputEl.value, defaultPrefix);
+      if (cleaned !== inputEl.value) {
+        inputEl.value = cleaned;
+      }
+    });
   }
 
   function showStatus(msg, type = 'info') {
@@ -802,7 +852,7 @@
     subtitle.style.display = 'block';
     loadingText.style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
-    document.getElementById('newPubDate').value = getNowLocalInput();
+    resetAddClipDefaults();
     await loadFeedFromGitHub();
   }
 
@@ -1010,8 +1060,17 @@
     });
   }
 
-  // --- URL-tjek mod tastefejl ---
+  // --- URL-tjek mod tastefejl og manglende filnavn ---
   function validateUrlsBeforeSave(videoUrl, thumbUrl) {
+    if (videoUrl === DEFAULT_VIDEO_PREFIX || /\/$/.test(videoUrl)) {
+      alert('Husk at tilføje selve filnavnet i "URL til video".');
+      return false;
+    }
+    if (thumbUrl === DEFAULT_THUMB_PREFIX || /\/$/.test(thumbUrl)) {
+      alert('Husk at tilføje selve filnavnet i "URL til billede".');
+      return false;
+    }
+
     const warnings = [];
     if (/\s/.test(videoUrl)) warnings.push('Video-URL indeholder mellemrum.');
     if (!/\.(mp4|mov)$/i.test(videoUrl)) warnings.push('Video-URL slutter ikke på .mp4 eller .mov.');
@@ -1340,6 +1399,9 @@
     document.getElementById('linkOpenFeed').href = getPublicFeedUrl();
     document.getElementById('modalFileLabel').textContent = GITHUB_CONFIG.path;
 
+    setupPrefilledUrlField(document.getElementById('newVideoUrl'), DEFAULT_VIDEO_PREFIX);
+    setupPrefilledUrlField(document.getElementById('newThumbUrl'), DEFAULT_THUMB_PREFIX);
+
     document.getElementById('statusBanner').addEventListener('click', (e) => {
       e.currentTarget.style.display = 'none';
     });
@@ -1358,9 +1420,9 @@
     document.getElementById('addClipForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const title = document.getElementById('newTitle').value.trim();
-      const link = document.getElementById('newVideoUrl').value.trim();
+      const link = normalizePrefilledUrl(document.getElementById('newVideoUrl').value, DEFAULT_VIDEO_PREFIX);
       const dtLocal = document.getElementById('newPubDate').value;
-      const thumb = document.getElementById('newThumbUrl').value.trim();
+      const thumb = normalizePrefilledUrl(document.getElementById('newThumbUrl').value, DEFAULT_THUMB_PREFIX);
       const tags = document.getElementById('newTags').value.trim();
 
       if (!validateUrlsBeforeSave(link, thumb)) return;
@@ -1385,7 +1447,7 @@
 
       if (ok) {
         document.getElementById('addClipForm').reset();
-        document.getElementById('newPubDate').value = getNowLocalInput();
+        resetAddClipDefaults();
       } else {
         items = items.filter(x => x.id !== newItem.id);
       }
