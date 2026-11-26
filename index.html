@@ -685,6 +685,9 @@
   // Indsæt jeres Google Apps Script Webapp-URL herunder (https://script.google.com/macros/s/.../exec)
   const PRODUCTION_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzbAkvvtjux13RMg6YB2GUN0wZsCVVrnHaBeydCuKU-c-swcWTYIOrrLpAZAo4y2rUR/exec';
 
+  // Antal timer der lægges oven i udsendelsens starttidspunkt fra produktionsdatabasen
+  const HOLDBACK_HOURS = 3;
+
   // Standard-URL'er til nye videoer og billeder (kan frit redigeres i felterne)
   const DEFAULT_VIDEO_PREFIX = 'http://83.151.146.221/HL_VIDEO_EB/';
   const DEFAULT_THUMB_PREFIX = 'http://83.151.146.221/HL_THUMBNAIL_EB/';
@@ -694,8 +697,21 @@
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const DEFAULT_LIMIT = 25;
 
+  // Generiske fyldord, som ikke skal oprettes som selvstændige tags
+  const GENERIC_TAG_STOPWORDS = new Set([
+    'herrer', 'kvinder', 'mænd', 'damer', 'herre', 'kvinde', 'drenge', 'piger',
+    'finale', 'semifinale', 'kvartfinale', 'ottendedelsfinale', 'bronzekamp',
+    '1/2-finale', '1/4-finale', '1/8-finale', '1/16-finale',
+    'slutspil', 'gruppespil', 'indledende', 'mellemrunde', 'kvalifikation',
+    'playoff', 'playoffs', 'final four', 'final 4',
+    'kamp', 'runde', 'dag', 'del', 'afsnit', 'episode', 'etape', 'heat', 'løb', 'stævne', 'turnering',
+    'live', 'direkte', 'genudsendelse', 'optakt', 'nedtakt', 'studie',
+    'højdepunkter', 'highlights', 'sammendrag', 'sport', 'sport live', 'sportlive'
+  ]);
+
   let activeToken = '';
   let items = [];
+  let productionItems = [];
   let currentSha = null;
   let showAllItems = false;
   let statusTimer = null;
@@ -709,6 +725,195 @@
     document.getElementById('newVideoUrl').value = DEFAULT_VIDEO_PREFIX;
     document.getElementById('newThumbUrl').value = DEFAULT_THUMB_PREFIX;
     document.getElementById('newPubDate').value = getNowLocalInput();
+  }
+
+  // --- Beregn udgivelsestidspunkt ud fra produktionsdato + starttid + holdback-timer ---
+  function computeHoldbackDateLocal(dateIso, timeStr, addHours = HOLDBACK_HOURS) {
+    const dateMatch = String(dateIso || '').trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!dateMatch) return getNowLocalInput();
+
+    const y = Number(dateMatch[1]);
+    const m = Number(dateMatch[2]);
+    const d = Number(dateMatch[3]);
+
+    const timeMatch = String(timeStr || '').trim().match(/^(\d{1,2}):(\d{2})$/);
+    const hh = timeMatch ? Number(timeMatch[1]) : 0;
+    const mm = timeMatch ? Number(timeMatch[2]) : 0;
+
+    // UTC-beregning sikrer præcist datoskift over midnat/månedsskift uden sommer-/vintertidsforskydning
+    const shifted = new Date(Date.UTC(y, m - 1, d, hh + addHours, mm, 0));
+    const sy = shifted.getUTCFullYear();
+    const sm = String(shifted.getUTCMonth() + 1).padStart(2, '0');
+    const sd = String(shifted.getUTCDate()).padStart(2, '0');
+    const shh = String(shifted.getUTCHours()).padStart(2, '0');
+    const smm = String(shifted.getUTCMinutes()).padStart(2, '0');
+    return `${sy}-${sm}-${sd}T${shh}:${smm}`;
+  }
+
+  // --- Intelligent udtræk af relevante tags ---
+  function cleanCandidateTag(raw) {
+    return String(raw || '')
+      .replace(/\([^)]*\)/g, ' ')
+      .replace(/^[\s:.,;\-–—/|"'«»]+|[\s:.,;\-–—/|"'«»]+$/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLocaleLowerCase('da-DK');
+  }
+
+  function isMeaningfulTag(tag) {
+    if (!tag || tag.length < 2) return false;
+    if (GENERIC_TAG_STOPWORDS.has(tag)) return false;
+    // Ignorer rene tal og årstal/sæsoner (f.eks. "2026" eller "2025/26")
+    if (/^\d+([./-]\d+)*$/.test(tag)) return false;
+    // Ignorer runde-/etape-/dag-angivelser (f.eks. "2. runde", "3. etape", "dag 1")
+    if (/^(\d+\.?\s*(runde|kamp|dag|del|etape|afdeling|afsnit|sæt|halvleg|heat)|runde\s*\d+|dag\s*\d+|del\s*\d+|kamp\s*\d+|etape\s*\d+)$/i.test(tag)) {
+      return false;
+    }
+    return true;
+  }
+
+  function parseTitleStructure(sportRaw, titleRaw) {
+    let sport = cleanCandidateTag(sportRaw);
+    let working = String(titleRaw || '').replace(/\([^)]*\)/g, ' ').trim();
+
+    if (!sport && working.includes(':')) {
+      const firstColon = working.indexOf(':');
+      sport = cleanCandidateTag(working.slice(0, firstColon));
+      working = working.slice(firstColon + 1).trim();
+    } else if (sport && working.toLocaleLowerCase('da-DK').startsWith(sport + ':')) {
+      working = working.slice(sport.length + 1).trim();
+    }
+
+    const colonParts = working.split(':').map(s => s.trim()).filter(Boolean);
+    const contextTags = [];
+    const participants = [];
+    const matchupRegex = /\s+[-–—]\s+|\s+(?:mod|vs\.?)\s+/i;
+
+    colonParts.forEach((segment, idx) => {
+      if (matchupRegex.test(segment)) {
+        const sides = segment.split(matchupRegex);
+        sides.forEach(side => {
+          side.split(',').forEach(piece => {
+            const cleaned = cleanCandidateTag(piece);
+            if (isMeaningfulTag(cleaned)) participants.push(cleaned);
+          });
+        });
+      } else if (idx < colonParts.length - 1) {
+        segment.split(',').forEach(piece => {
+          const cleaned = cleanCandidateTag(piece);
+          if (isMeaningfulTag(cleaned)) contextTags.push(cleaned);
+        });
+      } else {
+        segment.split(',').forEach(piece => {
+          const cleaned = cleanCandidateTag(piece);
+          if (isMeaningfulTag(cleaned)) participants.push(cleaned);
+        });
+      }
+    });
+
+    return { sport, contextTags, participants };
+  }
+
+  function findHistoricalLeagueTags(sport, participants) {
+    if (!participants.length || !items.length) return [];
+
+    // Opbyg statistik over faste turneringstags pr. hold/deltager ud fra eksisterende rss.xml
+    const participantStats = participants.map(participant => {
+      let matchCount = 0;
+      const tagCounts = new Map();
+
+      items.forEach(pastItem => {
+        const parsedPast = parseTitleStructure('', pastItem.title);
+        if (sport && parsedPast.sport && parsedPast.sport !== sport) return;
+
+        const pastEntities = [...parsedPast.contextTags, ...parsedPast.participants];
+        if (!pastEntities.includes(participant)) return;
+
+        matchCount++;
+        const otherTitleEntities = pastEntities.filter(e => e !== participant);
+        const pastTags = String(pastItem.tags || '')
+          .split(',')
+          .map(cleanCandidateTag)
+          .filter(isMeaningfulTag);
+
+        const uniqueInClip = new Set(pastTags);
+        uniqueInClip.forEach(t => {
+          if (t === sport || participants.includes(t)) return;
+          // Udeluk tidligere modstandere (tags der optræder i det gamle klips egen titel)
+          const overlapsPastTitleEntity = otherTitleEntities.some(
+            ent => ent === t || ent.includes(t) || t.includes(ent)
+          );
+          if (overlapsPastTitleEntity) return;
+
+          tagCounts.set(t, (tagCounts.get(t) || 0) + 1);
+        });
+      });
+
+      return { participant, matchCount, tagCounts };
+    });
+
+    // Hvis mindst to hold er i kampen, og begge optræder med samme liga-tag tidligere i rss.xml
+    const activeStats = participantStats.filter(s => s.matchCount > 0);
+    if (activeStats.length >= 2) {
+      const firstMap = activeStats[0].tagCounts;
+      const sharedCandidates = [];
+      firstMap.forEach((countA, candidate) => {
+        const sharedByAll = activeStats.slice(1).every(s => s.tagCounts.has(candidate));
+        if (sharedByAll) {
+          const totalScore = activeStats.reduce((sum, s) => sum + (s.tagCounts.get(candidate) || 0), 0);
+          sharedCandidates.push({ candidate, totalScore });
+        }
+      });
+      if (sharedCandidates.length > 0) {
+        sharedCandidates.sort((a, b) => b.totalScore - a.totalScore);
+        return [sharedCandidates[0].candidate];
+      }
+    }
+
+    // Ellers vælg et gennemgående liga-tag fra et enkelt hold (kræver mindst 2 klip og >= 60% dækning)
+    const fallbackCandidates = [];
+    activeStats.forEach(s => {
+      if (s.matchCount < 2) return;
+      s.tagCounts.forEach((cnt, candidate) => {
+        if (cnt >= 2 && (cnt / s.matchCount) >= 0.6) {
+          fallbackCandidates.push({ candidate, cnt });
+        }
+      });
+    });
+
+    if (fallbackCandidates.length > 0) {
+      fallbackCandidates.sort((a, b) => b.cnt - a.cnt);
+      return [fallbackCandidates[0].candidate];
+    }
+
+    return [];
+  }
+
+  function generateSmartTags(prodItem) {
+    const { sport, contextTags, participants } = parseTitleStructure(
+      prodItem.sport,
+      prodItem.programTitle || prodItem.fullTitle
+    );
+
+    const ordered = [];
+    const addUnique = (tag) => {
+      if (tag && !ordered.includes(tag)) ordered.push(tag);
+    };
+
+    if (sport && isMeaningfulTag(sport)) {
+      addUnique(sport);
+    }
+
+    if (contextTags.length > 0) {
+      contextTags.forEach(addUnique);
+    } else {
+      const historical = findHistoricalLeagueTags(sport, participants);
+      historical.forEach(addUnique);
+    }
+
+    participants.forEach(addUnique);
+
+    return ordered.join(', ');
   }
 
   // --- Hent seneste produktioner fra Google Sheet via Apps Script ---
@@ -735,16 +940,18 @@
         throw new Error(data.error || 'Ugyldigt svar fra produktionsdatabasen.');
       }
 
-      if (data.items.length === 0) {
+      productionItems = data.items;
+
+      if (productionItems.length === 0) {
         selectEl.innerHTML = '<option value="">— Ingen produktioner fundet de seneste 7 dage —</option>';
         return;
       }
 
       const optionsHtml = [
-        '<option value="">Vælg udsendelse fra de seneste 7 dage</option>',
-        ...data.items.map(it => {
+        '<option value="">— Vælg udsendelse fra de seneste 7 dage —</option>',
+        ...productionItems.map((it, idx) => {
           const label = `${it.dateDisplay} – ${it.fullTitle}`;
-          return `<option value="${escapeHtml(it.fullTitle)}">${escapeHtml(label)}</option>`;
+          return `<option value="${idx}">${escapeHtml(label)}</option>`;
         })
       ].join('');
 
@@ -1469,15 +1676,29 @@
 
     const productionSelect = document.getElementById('productionSelect');
     const newTitleInput = document.getElementById('newTitle');
+    const newPubDateInput = document.getElementById('newPubDate');
+    const newTagsInput = document.getElementById('newTags');
 
     productionSelect.addEventListener('change', () => {
-      if (productionSelect.value) {
-        newTitleInput.value = productionSelect.value;
+      const selectedVal = productionSelect.value;
+
+      if (selectedVal === '') {
+        newTitleInput.value = '';
+        newTagsInput.value = '';
+        newPubDateInput.value = getNowLocalInput();
+        return;
       }
+
+      const prodItem = productionItems[Number(selectedVal)];
+      if (!prodItem) return;
+
+      newTitleInput.value = prodItem.fullTitle;
+      newPubDateInput.value = computeHoldbackDateLocal(prodItem.dateIso, prodItem.time, HOLDBACK_HOURS);
+      newTagsInput.value = generateSmartTags(prodItem);
     });
 
     newTitleInput.addEventListener('input', () => {
-      if (productionSelect.value && newTitleInput.value !== productionSelect.value) {
+      if (newTitleInput.value.trim() === '' && productionSelect.value !== '') {
         productionSelect.value = '';
       }
     });
