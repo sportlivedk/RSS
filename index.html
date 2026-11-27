@@ -1010,7 +1010,7 @@
     const url = (PRODUCTION_WEBAPP_URL || '').trim();
 
     if (!url || url.includes('INDSÆT_')) {
-      selectEl.innerHTML = '<option value="">— Indsæt Webapp-URL i index.html for at hente produktioner —</option>';
+      selectEl.innerHTML = '<option value="">Indsæt Webapp-URL i index.html for at hente produktioner</option>';
       selectEl.disabled = true;
       return;
     }
@@ -1031,7 +1031,7 @@
       productionItems = data.items;
 
       if (productionItems.length === 0) {
-        selectEl.innerHTML = '<option value="">— Ingen produktioner fundet de seneste 7 dage —</option>';
+        selectEl.innerHTML = '<option value="">Ingen produktioner fundet de seneste 7 dage</option>';
         return;
       }
 
@@ -1046,7 +1046,7 @@
       selectEl.innerHTML = optionsHtml;
       selectEl.disabled = false;
     } catch (err) {
-      selectEl.innerHTML = '<option value="">— Kunne ikke hente produktionslisten (skriv titel nedenfor) —</option>';
+      selectEl.innerHTML = '<option value="">Kunne ikke hente produktionslisten (skriv titel nedenfor)</option>';
       selectEl.disabled = true;
     }
   }
